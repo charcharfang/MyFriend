@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Friends BaseClass="MyFriend.Shop">
+  <Friend Class="_1Charge" Name="e车充电" Company="众业达" URL="http://www.1charge.cn" Description="" Headers="城市,编号,名称" HeadersWidth="10,10" HeadersAlignment="l,l,l"/>
+  <Friend Class="_91ELian" Name="e驿充电" Company="珠海驿联新能源汽车" URL="http://91elian.com/" Description="泰坦下属公司"  Headers="编号,名称,桩个数,状态" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,l" />
+  <Friend Class="AnYoCharging" Name="安悦充电" Company="上汽安悦" URL="http://anyocharging.com/" Description=""  Headers="编号,名称,状态,交流个数,直流个数" HeadersWidth="10,90,10,15" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="BJEV520" Name="充电吧" Company="北汽新能源" URL="http://www.bjev520.com" Description="不确定是不是北汽官方的" Headers="编号,名称,运营商,快充个数,慢充个数" HeadersWidth="10,70,30,15" HeadersAlignment="l,l,l,r,r" />
+  <Friend Class="CamelRay" Name="骆驼快充" Company="亿车科技" URL="http://www.camelray.com" Description="" Headers="编号,名称,地址,桩个数" HeadersWidth="45,30,50,15" HeadersAlignment="l,l,l,r" />
+  <Friend Class="ChargerLink" Name="充电网" Company="充电网" URL="http://www.chargerlink.com/" Description="" />
+  <Friend Class="CNMaps" Name="充电桩" Company="CNMaps" URL="http://www.cnmaps.net/" Description="" Headers="编号,省,市,名称,地址,桩个数" HeadersWidth="10,15,15,30,30" HeadersAlignment="l,l,l,l,l,r" />
+  <Friend Class="DuDuChong" Name="度度充" Company="度度充" URL="http://www.duduchong.com" Description="" Headers="编号,名称,地址,桩个数" HeadersWidth="40,30,60" HeadersAlignment="l,l,l,r"/>
+  <Friend Class="eChargeNet" Name="e充电" Company="国家电网" URL="http://www.echargenet.com" Description="" Headers="编号,省,市,地址,桩个数" HeadersWidth="40,10,10,70" HeadersAlignment="l,l,l,l,r"/>
+  <Friend Class="eChong" Name="E充站" Company="上海依威能源" URL="http://www.evpowergroup.com" Description="" Headers="编号,城市,区,地址,安装时间" HeadersWidth="10,10,10,70" HeadersAlignment="l,l,l,l,l"/>
+  <Friend Class="eiChong" Name="爱充网" Company="万马新能源" URL="http://www.eichong.com/html/" Description="" Headers="编号,省,市,电站,地址,桩个数" HeadersWidth="10,10,10,50,50" HeadersAlignment="l,l,l,l,l,r"/>
+  <Friend Class="EnergeDog" Name="电狗" Company="电狗？" URL="http://121.42.53.24" Description="" Headers="编号,电站,纬度,经度" HeadersWidth="10,60,30" HeadersAlignment="l,l,l,l"/>
+  <Friend Class="evCharge" Name="充电桩" Company="电动未来" URL="http://www.evcharge.cc/" Description="" />
+  <Friend Class="EVChargeOnline" Name="联联充电" Company="上海电科所" URL="https://www.evchargeonline.com/" Description="上海充换电设施公共数据采集与监测市级平台" Headers="编号,地址,运营商,开放桩,专用桩" HeadersWidth="20,90,10,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="Govlan" Name="为蓝出行" Company="为蓝科技" URL="http://www.govlan.com" Description="" Headers="编号,电站,#快充,#慢充,充电费" HeadersWidth="10,60,10,10" HeadersAlignment="l,l,r,r,r"/>
+  <Friend Class="HappyEV" Name="畅的" Company="武汉畅的科技" URL="http://www.happyev.com/" Description="" Headers="编号,电站,地址,#快充,#慢充" HeadersWidth="20,40,45,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="HHLNE" Name="电桩汇" Company="电桩汇" URL="http://www.hhlne.com" Description="" Headers="编号,电站,运营商,#快充,#慢充" HeadersWidth="40,40,30,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="iEV" Name="聚能充" Company="联合电动" URL="http://ju.i-ev.com" Description="" Headers="编号,电站,支付,#快充,#慢充" HeadersWidth="10,30,40,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="KLC" Name="快乐充" Company="四川快乐充网络科技有限公司" URL="http://www.klcxny.com/" Description="开发者：xiangming Lan" Headers="编号,电站,地址,#空闲快充,#空闲慢充" HeadersWidth="10,30,40,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="LanHai" Name="蓝海充电桩" Company="蓝电联盟" URL="貌似没有网址" Description="" Headers="编号,电站,说明,#快充,#慢充" HeadersWidth="10,30,40,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="LetsCharge" Name="充电队长" Company="贝棱斯实业（上海）有限公司" URL="http://www.letscharge.cn" Description="" Headers="编号,#空闲桩" HeadersWidth="50" HeadersAlignment="l,r"/>
+  <Friend Class="Parwa" Name="加电桩" Company="菊水皇家" URL="http://www.cnparwa.com" Description="公司名字看着菊花一紧……" />
+  <Friend Class="PowerLife" Name="电动生活" Company="北京电动生活信息技术有限公司" URL="http://www.powerlife.com.cn" Description="" />
+  <Friend Class="StarCharge" Name="星星充电" Company="星星充电" URL="http://www.starcharge.com" Description="" Headers="城市,编号,电站,地址,#快充,#慢充" HeadersWidth="10,20,30,60,10" HeadersAlignment="l,l,l,l,r,r"/>
+  <Friend Class="TellUsPowerSales" Name="小易出行" Company="" URL="https://www.telluspowersales.com" Description="小程序是：小易充电" Headers="编号" HeadersWidth="40" HeadersAlignment="l"/>
+  <Friend Class="Tesla" Name="特斯拉" Company="特斯拉" URL="http://www.tesla.cn" Description="" Headers="编号,电站,说明" HeadersWidth="10,40" HeadersAlignment="l,l,l"/>
+  <Friend Class="UEEE" Name="聚电桩" Company="聚电网络" URL="http://ueee.cn" Description="" Headers="编号,电站,地址,#桩" HeadersWidth="20,40,70" HeadersAlignment="l,l,l,r"/>
+  <Friend Class="WeiZiWo" Name="为生活充电" Company="业祥科技" URL="http://www.weiziwo.net" Description="" Headers="编号,电站,运营商,说明" HeadersWidth="20,60,10" HeadersAlignment="l,l,l,l"/>
+  <Friend Class="WinSky" Name="云电桩" Company="云杉智慧新能源" URL="http://www.win-sky.com.cn" Description="" Headers="编号,电站,#空闲快充,#空闲慢充" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,r"/>
+  <Friend Class="ZTEV" Name="兴冲冲" Company="中兴新能源汽车" URL="http://www.ztev.com.cn" Description="" />
+  <Friend Class="YunKuaiChong" Name="云快充" Company="云快充" URL="http://www.ykccn.com/" Description="" />
+  <Friend Class="RenRenChongDian" Name="优易充" Company="华商三优" URL="http://www.renrenchongdian.com" Description="" />
+  <Friend Class="XiaoJuKeJi" Name="滴滴车主" Company="小桔科技" URL="http://www.xiaojukeji.com" Description="" Headers="编号,名称,运营商,评分,#快充,#慢充,销售价,标签" HeadersWidth="32,42,10,10,10,10,10" HeadersAlignment="l,l,l,r,r,l,r,l"/>
+  <Friend Class="eCloudPower" Name="云电网" Company="云电科技" URL="http://www.ecloudpower.com" Description="" Headers="编号,名称,ins,#快充,#慢充" HeadersWidth="20,80,20,10" HeadersAlignment="l,l,l,r,r"/>
+
+</Friends>
