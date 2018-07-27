@@ -70,7 +70,7 @@ namespace MyFriend.Friend
 
             var t = item.Type;
             var obj = Activator.CreateInstance(t);
-            var ret = Convert.ToString(t.InvokeMember("Transform",
+            var ret = Convert.ToString(t.InvokeMember("Transform2Matrix",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
                                 null, obj, new object[] { bigtext }
                             ));

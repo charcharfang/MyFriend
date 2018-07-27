@@ -66,7 +66,7 @@ namespace MyFriend.Shop
             return list;
         }
 
-        public string Transform(string bigtext)
+        public string Transform2Matrix(string bigtext)
         {
             var header = Utils.GetUnifiedDataStructureFormatter();
 
