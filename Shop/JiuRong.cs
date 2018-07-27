@@ -21,5 +21,10 @@ namespace MyFriend.Shop
 
             return Utils.PostData(url, data);
         }
+
+        public List<List<string>> GetWellFormattedStations(string bigtext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

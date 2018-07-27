@@ -1,23 +1,26 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using Utility;
 
 namespace MyFriend.Shop
 {
-    public class AnYoCharging:ICharge
+    public class AnYoCharging : ICharge
     {
         public string GetStationDetail(string staid)
         {
             string url = "http://wx.anyocharging.com/api/v1/station/station/get";
-            string data = "{\"id\":\""+staid+ "\"}";
+            string data = "{\"id\":\"" + staid + "\"}";
 
             var ret = Utils.PostData(url, data, headers: new Dictionary<string, string>() {
                 { "Authorization", "d2VpeGluLmFwcC5hbnlvY2hhcmdpbmcuY29tOk1qVXlOamhqTjJVeVlUTTBabU00T0dVME5tTTFNbVl3" },
                 { "SESSIONID", "MzUzYjQzNjg4YzQ0YThlNmVjYTk5YmJj" },
                 {"r","1530785863892" },
                 },
-                contentType:"applicatoin/json"
+                contentType: "applicatoin/json"
             );
 
             return JToken.Parse(ret).ToString(Newtonsoft.Json.Formatting.Indented);
@@ -25,13 +28,25 @@ namespace MyFriend.Shop
 
         public string GetStations()
         {
-            string url = "http://wx.anyocharging.com/api/v1/station/station/search";
+            string url = "http://wx.anyocharging.com/action?code=061MbCta0KU0xv1m6Yra0XvUta0MbCty&state=search-stations";
+            var sessionid = "MjE1YTkyODVkMmVmNDEzZGE0YWIwNzBl";
+            using (WebClient wc = new WebClient())
+            {
+                wc.Encoding = Encoding.UTF8;
+                var html = wc.DownloadString(url);
+                if (false == string.IsNullOrEmpty(html))
+                {
+                    sessionid = Utils.GetPartFromString(html, "?token=", "&bindtype");
+                }
+            }
+
+            url = "http://wx.anyocharging.com/api/v1/station/station/search";
             string data = "{\"data\":\"{\"query\":\"\",\"city\":\"\",\"longitude\":120.51093230164267,\"latitude\":36.17809907769056,\"location\":\"附近\",\"order_by\":\"distance\",\"show_public\":true,\"show_specific\":true,\"show_ctrlable\":false,\"offset\":0,\"limit\":999999}";
 
-            var ret = Utils.PostData(url, data,headers:new Dictionary<string, string>() {
+            var ret = Utils.PostData(url, data, headers: new Dictionary<string, string>() {
                 { "Authorization", "d2VpeGluLmFwcC5hbnlvY2hhcmdpbmcuY29tOk1qVXlOamhqTjJVeVlUTTBabU00T0dVME5tTTFNbVl3" },
-                { "SESSIONID", "MzUzYjQzNjg4YzQ0YThlNmVjYTk5YmJj" },
-                {"r","1530785863892" }
+                { "SESSIONID", sessionid },
+                {"r","1532676532209" }
             });
 
             return ret;
@@ -49,6 +64,52 @@ namespace MyFriend.Shop
             }
 
             return list;
+        }
+
+        public string Transform(string bigtext)
+        {
+            var header = Utils.GetUnifiedDataStructureFormatter();
+
+            var stations = (JsonConvert.DeserializeObject(bigtext) as JToken)["data"]["stations"] as JArray;
+            StringBuilder sb = new StringBuilder();
+            //"ID,AppID,Operator,ID2,Name,Address,Lng,Lat,FastCount,SlowCount,ElectricPrice,ServicePrice,ParkDesc,
+            //SiteGuide,BdLng,BdLat,Star,Label,Payment,Location,Province,City,District,StubGroupType,OperationType,
+            //OperationTime,Tel"
+            for (int i = 0; i < stations.Count; i++)
+            {
+                var s = stations[i];
+                sb.AppendFormat(header, 
+                    "AnYoCharging_" + Convert.ToString(s["id"]), 
+                    "安悦充电", 
+                    Convert.ToString(s["provider"]), 
+                    Convert.ToString(s["id"]),
+                    Convert.ToString(s["name"]),
+                    Convert.ToString(s["address"]),
+                    Convert.ToString(s["longitude"]), 
+                    Convert.ToString(s["latitude"]),
+                    Convert.ToString(s["fast_cnt"]), 
+                    Convert.ToString(s["slow_cnt"]), 
+                    Convert.ToString(s["dc_costfee"]) + "_" + Convert.ToString(s["ac_costfee"]),
+                    Convert.ToString(s["serve_fee"]), 
+                    Convert.ToString(s["parking_desc"]),
+                    Convert.ToString(s["office_description"]),
+                    Convert.ToString(s["longitude"]), 
+                    Convert.ToString(s["latitude"]),
+                    Convert.ToString(s["score"]), 
+                    "", 
+                    Convert.ToString(s["fee_type"]), 
+                    "",
+                    Convert.ToString(s["province"]), 
+                    Convert.ToString(s["city"]), 
+                    Convert.ToString(s["district"]),
+                    "", 
+                    "", 
+                    Convert.ToString(s["open_forbusiness_date"]), 
+                    ""
+                );
+            }
+
+            return sb.ToString();
         }
     }
 }

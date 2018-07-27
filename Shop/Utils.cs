@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Utility
 {
@@ -47,7 +48,7 @@ namespace Utility
 
             request.Method = "POST";
             request.ContentType = contentType;
-            request.Accept = accept;            
+            request.Accept = accept;
 
             if (headers != null)
             {
@@ -60,7 +61,7 @@ namespace Utility
             if (cookies != null)
             {
                 CookieContainer cc = new CookieContainer();
-                foreach(var c in cookies)
+                foreach (var c in cookies)
                 {
                     cc.Add(c);
                 }
@@ -69,7 +70,7 @@ namespace Utility
             }
             //request.ClientCertificates.Add(new System.Security.Cryptography.X509Certificates.X509Certificate(AppDomain.CurrentDomain.BaseDirectory + "fqq.cer"));
             request.ServicePoint.Expect100Continue = true;
-            if (false == String.IsNullOrEmpty(userAgent)) request.UserAgent = userAgent;            
+            if (false == String.IsNullOrEmpty(userAgent)) request.UserAgent = userAgent;
 
             //https://stackoverflow.com/questions/26389899/how-do-i-disable-ssl-fallback-and-use-only-tls-for-outbound-connections-in-net/26392698#26392698
             //ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12;
@@ -143,6 +144,47 @@ namespace Utility
         //        }
         //    }
         //}
+
+        public static string GetPartFromString(string content, string s1, string s2)
+        {
+            string ret = String.Empty;
+            int startIndex = 0;
+
+            int index = content.IndexOf(s1, startIndex);
+            if (index > -1)
+            {
+                int index2 = content.IndexOf(s2, s1.Length + index);
+                if (index2 > -1)
+                {
+                    ret = content.Substring(s1.Length + index, index2 - index - s1.Length);
+                    startIndex = index2 + s2.Length;
+                }
+            }
+
+            return ret;
+        }
+
+        public static string GetUnifiedDataStructureFormatter()
+        {
+            var shopcfg = AppDomain.CurrentDomain.BaseDirectory + "ShopItems.xml";
+
+            var xml = new XmlDocument();
+            xml.Load(shopcfg);
+            var rootnode = xml.SelectSingleNode("/Friends");
+            var baseclass = rootnode.Attributes["UnifiedDataStructure"].Value;
+
+            var formatter = Convert.ToString(baseclass);
+            var tmp = formatter.Split(new char[] { ',' });
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < tmp.Length; i++)
+            {
+                sb.Append("{").Append(i).Append("}_CCF_");
+            }
+            if (sb.Length > 0) sb.Remove(sb.Length-5, 5);
+
+            return sb.ToString() + "\r\n";
+        }
     }
 
 

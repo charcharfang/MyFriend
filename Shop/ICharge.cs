@@ -10,5 +10,6 @@ namespace MyFriend.Shop
     {
         string GetStations();
         string GetStationDetail(string staid);
+        List<List<string>> GetWellFormattedStations(string bigtext);
     }    
 }

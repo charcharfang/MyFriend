@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Friends BaseClass="MyFriend.Shop">
+<Friends BaseClass="MyFriend.Shop" UnifiedDataStructure="ID,AppID,Operator,ID2,Name,Address,Lng,Lat,FastCount,SlowCount,ElectricPrice,ServicePrice,ParkDesc,SiteGuide,BdLng,BdLat,Star,Label,Payment,Location,Province,City,District,StubGroupType,OperationType,OperationTime,Tel">
   <Friend Class="_1Charge" Name="e车充电" Company="众业达" URL="http://www.1charge.cn" Description="" Headers="城市,编号,名称" HeadersWidth="10,10" HeadersAlignment="l,l,l"/>
   <Friend Class="_91ELian" Name="e驿充电" Company="珠海驿联新能源汽车" URL="http://91elian.com/" Description="泰坦下属公司"  Headers="编号,名称,桩个数,状态" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,l" />
-  <Friend Class="AnYoCharging" Name="安悦充电" Company="上汽安悦" URL="http://anyocharging.com/" Description=""  Headers="编号,名称,状态,交流个数,直流个数" HeadersWidth="10,90,10,15" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="AnYoCharging" Name="安悦充电" Company="上汽安悦" URL="http://anyocharging.com/" Description=""  Headers="编号,名称,状态,交流个数,直流个数" HeadersWidth="10,90,10,15" HeadersAlignment="l,l,l,r,r" Mappings="ID=id,Name=name,Address=address,Operator=provider,FastCount=fast_cnt,SlowCount=slow_cnt,Star=score,Province=province,City=city,District=district,ParkDesc=parking_desc,Lng=longitude,Lat=latitude,ServicePrice=serve_fee,ElectricPrice=dc_costfee+ac_costfee,SiteGuide=office_description,OperationTime=open_forbusiness_date,"/>
   <Friend Class="BJEV520" Name="充电吧" Company="北汽新能源" URL="http://www.bjev520.com" Description="不确定是不是北汽官方的" Headers="编号,名称,运营商,快充个数,慢充个数" HeadersWidth="10,70,30,15" HeadersAlignment="l,l,l,r,r" />
   <Friend Class="CamelRay" Name="骆驼快充" Company="亿车科技" URL="http://www.camelray.com" Description="" Headers="编号,名称,地址,桩个数" HeadersWidth="45,30,50,15" HeadersAlignment="l,l,l,r" />
   <Friend Class="ChargerLink" Name="充电网" Company="充电网" URL="http://www.chargerlink.com/" Description="" />
@@ -29,10 +29,12 @@
   <Friend Class="UEEE" Name="聚电桩" Company="聚电网络" URL="http://ueee.cn" Description="" Headers="编号,电站,地址,#桩" HeadersWidth="20,40,70" HeadersAlignment="l,l,l,r"/>
   <Friend Class="WeiZiWo" Name="为生活充电" Company="业祥科技" URL="http://www.weiziwo.net" Description="" Headers="编号,电站,运营商,说明" HeadersWidth="20,60,10" HeadersAlignment="l,l,l,l"/>
   <Friend Class="WinSky" Name="云电桩" Company="云杉智慧新能源" URL="http://www.win-sky.com.cn" Description="" Headers="编号,电站,#空闲快充,#空闲慢充" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,r"/>
-  <Friend Class="ZTEV" Name="兴冲冲" Company="中兴新能源汽车" URL="http://www.ztev.com.cn" Description="" />
+  <Friend Class="ZTEV" Name="兴冲冲" Company="中兴新能源汽车" URL="http://www.ztev.com.cn" Description="" Headers="编号,电站,#桩" HeadersWidth="60,70" HeadersAlignment="l,l,r"/>
   <Friend Class="YunKuaiChong" Name="云快充" Company="云快充" URL="http://www.ykccn.com/" Description="" />
-  <Friend Class="RenRenChongDian" Name="优易充" Company="华商三优" URL="http://www.renrenchongdian.com" Description="" />
+  <Friend Class="RenRenChongDian" Name="优易充" Company="华商三优" URL="http://www.renrenchongdian.com" Description="" Headers="编号,名称,#快充,#慢充" HeadersWidth="30,80,10" HeadersAlignment="l,l,r,r"/>
   <Friend Class="XiaoJuKeJi" Name="滴滴车主" Company="小桔科技" URL="http://www.xiaojukeji.com" Description="" Headers="编号,名称,运营商,评分,#快充,#慢充,销售价,标签" HeadersWidth="32,42,10,10,10,10,10" HeadersAlignment="l,l,l,r,r,l,r,l"/>
   <Friend Class="eCloudPower" Name="云电网" Company="云电科技" URL="http://www.ecloudpower.com" Description="" Headers="编号,名称,ins,#快充,#慢充" HeadersWidth="20,80,20,10" HeadersAlignment="l,l,l,r,r"/>
-
+  <Friend Class="PuTian" Name="新充电圈" Company="普天" URL="http://www.???.com" Description="" Headers="城市,编号,名称,#快充,#慢充" HeadersWidth="10,20,80,10" HeadersAlignment="l,l,l,r,r"/>
+  <Friend Class="CarEnergyNet" Name="车电网/象前充" Company="深圳车电网" URL="www.carenergynet.com" Description="科陆与国开合作" Headers="编号,名称,#快充,#慢充" HeadersWidth="40,80,10" HeadersAlignment="l,l,r,r"/>
+  <!--<Friend Class="JiuRong" Name="???" Company="???" URL="http://???.com" Description="" Headers="编号,名称,ins,#快充,#慢充" HeadersWidth="20,80,20,10" HeadersAlignment="l,l,l,r,r"/>-->
 </Friends>

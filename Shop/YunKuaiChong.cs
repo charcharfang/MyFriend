@@ -23,5 +23,10 @@ namespace MyFriend.Shop
             //return ret;
             return "未破解";
         }
+
+        public List<List<string>> GetWellFormattedStations(string bigtext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

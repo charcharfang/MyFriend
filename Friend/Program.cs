@@ -22,8 +22,8 @@ namespace MyFriend.Friend
 
         static void Main(string[] args)
         {
-
-            //SaveData3();
+            
+            Test();
             //return;
             Console.SetWindowSize(140, 28);
             shoplist = InitShop();
@@ -38,6 +38,9 @@ namespace MyFriend.Friend
                 {
                     case "q":
                         return;
+                    case "s":
+                        SaveAllStationsFromFriend();
+                        continue;
                     case "u":
                         curMainPage = (curMainPage <= 0 ? 0 : curMainPage - 1);
                         continue;
@@ -56,6 +59,38 @@ namespace MyFriend.Friend
                         }
                         continue;
                 }
+            }
+        }
+
+        private static void SaveAllStationsFromFriend()
+        {
+            ShopItem item = shoplist[3];
+
+            var bigtext = GetBigtext(item);
+
+            var t = item.Type;
+            var obj = Activator.CreateInstance(t);
+            var ret = Convert.ToString(t.InvokeMember("Transform",
+                                BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
+                                null, obj, new object[] { bigtext }
+                            ));
+        }
+
+        private static void Test()
+        {
+            //string url = "https://www.kgechargenet.cn:8443/electricitya/services/ClientService";
+            //string data = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><InterfaceServiceEntrance xmlns=\"http://service.clientService.car.service.kge.com\"><whatEverYouNamed>{\"updatetime\":\"1970-01-01\",\"account\":\"13811112222\",\"sessionid\":\"FBC357B8CBDD5EE65DC344BEC617E4DF-n1\",\"enter\":\"cpm_gcsliss\",\"reqtime\":\"1532584330\"}</whatEverYouNamed></InterfaceServiceEntrance></soap:Body></soap:Envelope>";
+
+            //var ret = Utils.PostData(url, data);
+            string url = "http://wechat.xcharger.net/arranging/nearbyajax?lat=39.97243&lng=116.48978&start=0&dealer=&oasourceid=gh_cf544c25844a&onlyFree=false&onlyShared=false&siteType=&siteVehicleType=0";
+            using (WebClient wc = new WebClient())
+            {
+                //pageType=list; SESSION=99aa4a91-d1a4-4bcf-96b9-1d80c011922d                                                                                                         
+                wc.Headers.Add("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79 MicroMessenger/6.7.0 NetType/4G Language/zh_CN");
+                wc.Headers.Add(HttpRequestHeader.Cookie, "pageType=list; SESSION=99aa4a91-d1a4-4bcf-96b9-1d80c011922d");
+                wc.Encoding = Encoding.UTF8;
+                
+                var ret= wc.DownloadString(url);
             }
         }
 
@@ -136,7 +171,7 @@ namespace MyFriend.Friend
 
             FillLineByColor(0, 1, Console.WindowWidth, ConsoleColor.DarkGray);
             Console.CursorTop = 1;
-            string menu = "【Q】退出 【其他数字】调用模块 【U】上一页 【D】下一页";
+            string menu = "【Q】退出 【S】保存电站信息 【其他数字】调用模块 【U】上一页 【D】下一页";
 
             Console.Write(menu);//.PadRight(Console.WindowWidth-Encoding.Default.GetByteCount(menu)));
             Console.CursorTop = 2;
@@ -226,7 +261,7 @@ namespace MyFriend.Friend
                 ShowStationMenu(item);
                 DrawTable(item.Headers, item.HeadersWidth, item.HeadersAlignment, stations, curSubPage);
                 Console.CursorLeft = 0;
-                string originalInput = Console.ReadLine().Trim();
+                string originalInput = Console.ReadLine().Trim().Replace("\0", "");
                 string input = originalInput.ToLower();
                 switch (input)
                 {
@@ -300,6 +335,8 @@ namespace MyFriend.Friend
             var baseclass = rootnode.Attributes["BaseClass"].Value;
             foreach (XmlNode childNode in rootnode.ChildNodes)
             {
+                if (childNode.NodeType == XmlNodeType.Comment) continue;
+
                 ShopItem si = new ShopItem();
                 si.Name = childNode.Attributes["Name"].Value;
                 si.Company = childNode.Attributes["Company"].Value;
@@ -349,7 +386,7 @@ namespace MyFriend.Friend
             return ret;
         }
 
-        static List<List<string>> GetCachedStations(ShopItem item)
+        static string GetBigtext(ShopItem item)
         {
             var t = item.Type;
             string fname = String.Format("{0}\\Cache-{1}.txt", Utils.PATH, t.FullName);
@@ -369,6 +406,14 @@ namespace MyFriend.Friend
             {
                 bigtext = File.ReadAllText(fname);
             }
+
+            return bigtext;
+        }
+        static List<List<string>> GetCachedStations(ShopItem item)
+        {
+            var bigtext = GetBigtext(item);
+            var t = item.Type;
+            var obj = Activator.CreateInstance(t);
 
             var ret = t.InvokeMember("GetWellFormattedStations",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,

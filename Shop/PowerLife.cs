@@ -31,5 +31,10 @@ namespace MyFriend.Shop
             }
             
         }
+
+        public List<List<string>> GetWellFormattedStations(string bigtext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
