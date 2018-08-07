@@ -10,6 +10,7 @@ namespace MyFriend.Shop
 {
     public class AnYoCharging : ICharge
     {
+        private string sessionid = "MjE1YTkyODVkMmVmNDEzZGE0YWIwNzBl";
         public string GetStationDetail(string staid)
         {
             string url = "http://wx.anyocharging.com/api/v1/station/station/get";
@@ -17,7 +18,7 @@ namespace MyFriend.Shop
 
             var ret = Utils.PostData(url, data, headers: new Dictionary<string, string>() {
                 { "Authorization", "d2VpeGluLmFwcC5hbnlvY2hhcmdpbmcuY29tOk1qVXlOamhqTjJVeVlUTTBabU00T0dVME5tTTFNbVl3" },
-                { "SESSIONID", "MzUzYjQzNjg4YzQ0YThlNmVjYTk5YmJj" },
+                { "SESSIONID", sessionid },
                 {"r","1530785863892" },
                 },
                 contentType: "applicatoin/json"
@@ -29,7 +30,7 @@ namespace MyFriend.Shop
         public string GetStations()
         {
             string url = "http://wx.anyocharging.com/action?code=061MbCta0KU0xv1m6Yra0XvUta0MbCty&state=search-stations";
-            var sessionid = "MjE1YTkyODVkMmVmNDEzZGE0YWIwNzBl";
+            
             using (WebClient wc = new WebClient())
             {
                 wc.Encoding = Encoding.UTF8;
@@ -66,50 +67,56 @@ namespace MyFriend.Shop
             return list;
         }
 
-        public string Transform2Matrix(string bigtext)
+        public string Transform2Station(string bigtext)
         {
-            var header = Utils.GetUnifiedDataStructureFormatter();
+            //var header = Utils.GetUnifiedDataStructureFormatter(UnifiedDataStructure.Station);
 
-            var stations = (JsonConvert.DeserializeObject(bigtext) as JToken)["data"]["stations"] as JArray;
-            StringBuilder sb = new StringBuilder();
-            //"ID,AppID,Operator,ID2,Name,Address,Lng,Lat,FastCount,SlowCount,ElectricPrice,ServicePrice,ParkDesc,
-            //SiteGuide,BdLng,BdLat,Star,Label,Payment,Location,Province,City,District,StubGroupType,OperationType,
-            //OperationTime,Tel"
-            for (int i = 0; i < stations.Count; i++)
-            {
-                var s = stations[i];
-                sb.AppendFormat(header, 
-                    "AnYoCharging_" + Convert.ToString(s["id"]), 
-                    "安悦充电", 
-                    Convert.ToString(s["provider"]), 
-                    Convert.ToString(s["id"]),
-                    Convert.ToString(s["name"]),
-                    Convert.ToString(s["address"]),
-                    Convert.ToString(s["longitude"]), 
-                    Convert.ToString(s["latitude"]),
-                    Convert.ToString(s["fast_cnt"]), 
-                    Convert.ToString(s["slow_cnt"]), 
-                    Convert.ToString(s["dc_costfee"]) + "_" + Convert.ToString(s["ac_costfee"]),
-                    Convert.ToString(s["serve_fee"]), 
-                    Convert.ToString(s["parking_desc"]),
-                    Convert.ToString(s["office_description"]),
-                    Convert.ToString(s["longitude"]), 
-                    Convert.ToString(s["latitude"]),
-                    Convert.ToString(s["score"]), 
-                    "", 
-                    Convert.ToString(s["fee_type"]), 
-                    "",
-                    Convert.ToString(s["province"]), 
-                    Convert.ToString(s["city"]), 
-                    Convert.ToString(s["district"]),
-                    "", 
-                    "", 
-                    Convert.ToString(s["open_forbusiness_date"]), 
-                    ""
-                );
-            }
+            //var stations = (JsonConvert.DeserializeObject(bigtext) as JToken)["data"]["stations"] as JArray;
+            //StringBuilder sb = new StringBuilder();
+            ////"ID,AppID,Operator,ID2,Name,Address,Lng,Lat,FastCount,SlowCount,ElectricPrice,ServicePrice,ParkDesc,
+            ////SiteGuide,BdLng,BdLat,Star,Label,Payment,Location,Province,City,District,StubGroupType,OperationType,
+            ////OperationTime,Tel"
+            //for (int i = 0; i < stations.Count; i++)
+            //{
+            //    var s = stations[i];
+            //    sb.AppendFormat(header, 
+            //        "AnYoCharging_" + Convert.ToString(s["id"]), 
+            //        "安悦充电", 
+            //        Convert.ToString(s["provider"]), 
+            //        Convert.ToString(s["id"]),
+            //        Convert.ToString(s["name"]),
+            //        Convert.ToString(s["address"]),
+            //        Convert.ToString(s["longitude"]), 
+            //        Convert.ToString(s["latitude"]),
+            //        Convert.ToString(s["fast_cnt"]), 
+            //        Convert.ToString(s["slow_cnt"]), 
+            //        Convert.ToString(s["dc_costfee"]) + "_" + Convert.ToString(s["ac_costfee"]),
+            //        Convert.ToString(s["serve_fee"]), 
+            //        Convert.ToString(s["parking_desc"]),
+            //        Convert.ToString(s["office_description"]),
+            //        Convert.ToString(s["longitude"]), 
+            //        Convert.ToString(s["latitude"]),
+            //        Convert.ToString(s["score"]), 
+            //        "", 
+            //        Convert.ToString(s["fee_type"]), 
+            //        "",
+            //        Convert.ToString(s["province"]), 
+            //        Convert.ToString(s["city"]), 
+            //        Convert.ToString(s["district"]),
+            //        "", 
+            //        "", 
+            //        Convert.ToString(s["open_forbusiness_date"]), 
+            //        ""
+            //    );
+            //}
 
-            return sb.ToString();
+            //return sb.ToString();
+            return "";
+        }
+
+        public string Transform2Order(string bigtext)
+        {
+            return "";
         }
     }
 }

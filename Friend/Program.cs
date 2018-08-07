@@ -19,14 +19,63 @@ namespace MyFriend.Friend
         static int curMainPage = 0;
         static int curSubPage = 0;
         static int rowsPerPage = 20;
+        static string cmd = "";
+        static string app = "";
+        static string type = "";
+
 
         static void Main(string[] args)
         {
-            
-            Test();
-            //return;
+
+            if (!IsValidArgument(args, out cmd, out app, out type)) return;
+
+            InitAll();
+            switch (cmd)
+            {
+                case "list":
+                    EnterListMode();
+                    break;
+                case "dump":
+                    DoDump(app, type);
+                    break;
+                default:
+                    EnterListMode();
+                    break;
+            }
+
+            return;
+        }
+
+        private static void DoDump(string app, string type)
+        {
+            Utils.WriteLog("开始dump数据");
+            var clslist = app.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var item in shoplist)
+            {
+                if (app.ToLower() == "all")
+                {
+                    Utils.WriteLog("\tDump " + item.Value.Name);                    
+                    DoDumpFriend(item.Value, type);
+                }
+                else
+                {
+                    var cls = item.Value.Class;
+                    foreach (var friend in clslist)
+                    {
+                        if (cls.ToLower() == friend.ToLower())
+                        {
+                            Utils.WriteLog("\tDump " + item.Value.Name);
+                            DoDumpFriend(item.Value, type);
+                        }
+                    }
+                }
+            }
+            Utils.WriteLog("完成Dump数据");
+        }
+        private static void EnterListMode()
+        {
             Console.SetWindowSize(140, 28);
-            shoplist = InitShop();
 
             while (true)
             {
@@ -38,9 +87,9 @@ namespace MyFriend.Friend
                 {
                     case "q":
                         return;
-                    case "s":
-                        SaveAllStationsFromFriend();
-                        continue;
+                    //case "s":
+                    //    DoDump(app,type);
+                    //    continue;
                     case "u":
                         curMainPage = (curMainPage <= 0 ? 0 : curMainPage - 1);
                         continue;
@@ -61,19 +110,101 @@ namespace MyFriend.Friend
                 }
             }
         }
-
-        private static void SaveAllStationsFromFriend()
+        private static bool IsValidArgument(string[] args, out string cmd, out string app, out string type)
         {
-            ShopItem item = shoplist[3];
+            cmd = "list";
+            app = "all";
+            type = "station";
 
+            if (args.Length != 0 && args.Length != 2 && args.Length != 4 && args.Length != 6)
+            {
+                goto INVALID;
+            }
+
+            for (int i = 0; i < args.Length; i += 2)
+            {
+                switch (args[i].ToLower().Trim())
+                {
+                    case "-cmd":
+                        cmd = args[i + 1].ToLower().Trim();
+                        if (cmd != "dump" && cmd != "list") goto INVALID;
+                        continue;
+                    case "-app":
+                        app = args[i + 1].ToLower().Trim();
+                        continue;
+                    case "-type":
+                        type = args[i + 1].ToLower().Trim();
+                        if (type != "station" && type != "order") goto INVALID;
+                        continue;
+                    default:
+                        goto INVALID;
+                }
+            }
+
+            goto SUCCESS;
+
+            INVALID:
+            ShowHelp();
+            return false;
+            SUCCESS:
+            return true;
+        }
+
+        private static void ShowHelp()
+        {
+            Console.WriteLine("");
+            Console.WriteLine("用法 : MF -cmd <LIST|DUMP> -app <[ALL]|[APP1+APP2+APPN]> -type <Station|Order>");
+            Console.WriteLine("");
+            Console.WriteLine("       -cmd");
+            Console.WriteLine("       |-不输入，则进入list模式");
+            Console.WriteLine("       |-list，其他参数无效，显示所有插件中的station信息");
+            Console.WriteLine("       |-dump，保存指定app数据到CSV文件中");
+            Console.WriteLine("");
+            Console.WriteLine("       -app");
+            Console.WriteLine("       |-不输入或输入all，则处理所有插件中的app");
+            Console.WriteLine("       |-加号分隔的APP名称组合，对应shopitems.xml的Class名字");
+            Console.WriteLine("       |-当command是list时，此参数无效");
+            Console.WriteLine("");
+            Console.WriteLine("       -type");
+            Console.WriteLine("       |-默认为station，即只有电站信息，不包含桩的信息");
+            Console.WriteLine("       |-order，取桩明细信息，有的可以取到实时输出电流、电压、SOC");
+            Console.WriteLine("       |-当command是list时，此参数无效");
+            Console.WriteLine("");
+
+            Console.WriteLine("举例：");
+            Console.WriteLine("     mf，进入list模式，可以交互");
+            Console.WriteLine("     mf -cmd dump，处理所有插件中的APP并保存数据到data目录下");
+            Console.WriteLine("     mf -cmd dump -app eChargeNet|StarCharge|AnYoCharging|eiChong，把充电网、星星、安悦、万马的数据保存到data目录下");
+            Console.WriteLine("");
+        }
+        private static void DoDumpFriend(ShopItem item, string type)
+        {
             var bigtext = GetBigtext(item);
 
             var t = item.Type;
             var obj = Activator.CreateInstance(t);
-            var ret = Convert.ToString(t.InvokeMember("Transform2Matrix",
+            string dump = String.Empty;
+            string ts = String.Empty;
+
+            if (type == "station")
+            {
+                ts = Utils.TimeStampDate;
+                dump = Convert.ToString(t.InvokeMember("Transform2Station",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { bigtext }
+                                null, obj, new object[] { bigtext, ts }
                             ));
+            }
+            else if (type == "order")
+            {
+                ts = Utils.TimeStampTime;
+                dump = Convert.ToString(t.InvokeMember("Transform2Order",
+                                BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
+                                null, obj, new object[] { bigtext, ts }
+                            ));
+            }
+
+            File.WriteAllText(String.Format("data\\{0}_{1}.dmp", item.Class, ts), dump);
+
         }
 
         private static void Test()
@@ -89,8 +220,8 @@ namespace MyFriend.Friend
                 wc.Headers.Add("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79 MicroMessenger/6.7.0 NetType/4G Language/zh_CN");
                 wc.Headers.Add(HttpRequestHeader.Cookie, "pageType=list; SESSION=99aa4a91-d1a4-4bcf-96b9-1d80c011922d");
                 wc.Encoding = Encoding.UTF8;
-                
-                var ret= wc.DownloadString(url);
+
+                var ret = wc.DownloadString(url);
             }
         }
 
@@ -319,13 +450,46 @@ namespace MyFriend.Friend
             ResetColor();
         }
 
-        static Dictionary<int, ShopItem> InitShop()
+        static void ProcessBadFile()
+        {
+            var lines = File.ReadAllLines("citylist.txt", Encoding.GetEncoding("gb2312"));
+            Dictionary<string, string> plist = new Dictionary<string, string>();
+            Dictionary<string, string> clist = new Dictionary<string, string>();
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var tmp = lines[i].Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                var key = tmp[0];
+                if (key.Length == 2) plist.Add(key, tmp[1]);
+                if (key.Length == 4)
+                {
+                    clist.Add(key, tmp[1]);
+                    if (key == "1101" || key == "1201" || key == "3101" || key == "5001")
+                    {
+                        sb.AppendLine(key + "00," + plist[key.Substring(0, 2)] + "," + plist[key.Substring(0, 2)] + "," + tmp[1]);
+                    }
+                    else
+                    {
+                        sb.AppendLine(key + "00," + plist[key.Substring(0, 2)] + "," + clist[key.Substring(0, 4)] + "," + tmp[1]);
+                    }
+                }
+                if (key.Length == 6)
+                {
+
+                    sb.AppendLine(key + "," + plist[key.Substring(0, 2)] + "," + clist[key.Substring(0, 4)] + "," + tmp[1]);
+                }
+            }
+
+            File.WriteAllText("citymapping.txt", sb.ToString());
+        }
+        static void InitAll()
         {
             var shop = AppDomain.CurrentDomain.BaseDirectory + "MyFriend.Shop.dll";
             var shopcfg = AppDomain.CurrentDomain.BaseDirectory + "ShopItems.xml";
 
-            Dictionary<int, ShopItem> ret = new Dictionary<int, ShopItem>();
-
+            #region read items from xml configuration
+            shoplist = new Dictionary<int, ShopItem>();
             var xml = new XmlDocument();
             xml.Load(shopcfg);
             var rootnode = xml.SelectSingleNode("/Friends");
@@ -336,14 +500,15 @@ namespace MyFriend.Friend
             foreach (XmlNode childNode in rootnode.ChildNodes)
             {
                 if (childNode.NodeType == XmlNodeType.Comment) continue;
+                string clsname = childNode.Attributes["Class"].Value;
 
                 ShopItem si = new ShopItem();
+                si.Class = clsname;
                 si.Name = childNode.Attributes["Name"].Value;
                 si.Company = childNode.Attributes["Company"].Value;
                 si.URL = childNode.Attributes["URL"].Value;
                 si.Description = childNode.Attributes["Description"].Value;
 
-                string clsname = childNode.Attributes["Class"].Value;
                 Type t = asm.GetType(baseclass + "." + clsname);
                 if (null == t) throw new Exception("配置文件的类名没找到：" + clsname);
 
@@ -380,10 +545,12 @@ namespace MyFriend.Friend
                     si.HeadersAlignment = align;
                 }
 
-                ret.Add(i++, si);
+                shoplist.Add(i++, si);
             }
 
-            return ret;
+            #endregion read items from xml configuration
+
+
         }
 
         static string GetBigtext(ShopItem item)
@@ -666,7 +833,7 @@ namespace MyFriend.Friend
                     sb.Append(String.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}\r\n",
                         all[c + 1], Convert.ToString(s["id"]), Convert.ToString(s["name"]), Convert.ToString(s["address"]), Convert.ToString(s["stubDcCnt"]), Convert.ToString(s["stubAcCnt"]),
                         Convert.ToString(s["gisGcj02Lng"]), Convert.ToString(s["gisGcj02Lat"]),
-                        Convert.ToString(s["stubGroupType"])=="0"?"公共":"专用",
+                        Convert.ToString(s["stubGroupType"]) == "0" ? "公共" : "专用",
                         Convert.ToString(s["isBuilded"]) == "0" ? "否" : "是"
                         ));
                 }
@@ -678,6 +845,7 @@ namespace MyFriend.Friend
 
     internal class ShopItem
     {
+        public string Class { get; set; }
         public string Name { get; set; }
         public string Company { get; set; }
         public string URL { get; set; }

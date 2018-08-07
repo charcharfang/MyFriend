@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Friends BaseClass="MyFriend.Shop" UnifiedDataStructure="ID,AppID,Operator,ID2,Name,Address,Lng,Lat,FastCount,SlowCount,ElectricPrice,ServicePrice,ParkDesc,SiteGuide,BdLng,BdLat,Star,Label,Payment,Location,Province,City,District,StubGroupType,OperationType,OperationTime,Tel">
+<Friends BaseClass="MyFriend.Shop" UnifiedDataStructureStation="时间戳,APP名称,运营商,电站编号,电站名称,省,市,区,电站地址,电站类型,运营类型,运营时间,电话,经度,纬度,总功率,快充总功率,慢充总功率,快充个数,慢充个数,电费,服务费,总费用,停车,指引,BD经度,BD纬度,电站评分,标签,支付方式" UnifiedDataStructureOrder="时间戳,APP名称,运营商,电站编号,电站名称,省,市,区,电站地址,电站类型,运营类型,运营时间,电话,经度,纬度,总功率,快充总功率,慢充总功率,快充个数,慢充个数,电费,服务费,总费用,停车,指引,BD经度,BD纬度,电站评分,标签,支付方式,设备编号,设备ID,桩状态,地锁状态,最大输出电压,最大输出功率,当前电压,当前电流,当前SOC">
   <Friend Class="_1Charge" Name="e车充电" Company="众业达" URL="http://www.1charge.cn" Description="" Headers="城市,编号,名称" HeadersWidth="10,10" HeadersAlignment="l,l,l"/>
   <Friend Class="_91ELian" Name="e驿充电" Company="珠海驿联新能源汽车" URL="http://91elian.com/" Description="泰坦下属公司"  Headers="编号,名称,桩个数,状态" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,l" />
   <Friend Class="AnYoCharging" Name="安悦充电" Company="上汽安悦" URL="http://anyocharging.com/" Description=""  Headers="编号,名称,状态,交流个数,直流个数" HeadersWidth="10,90,10,15" HeadersAlignment="l,l,l,r,r" Mappings="ID=id,Name=name,Address=address,Operator=provider,FastCount=fast_cnt,SlowCount=slow_cnt,Star=score,Province=province,City=city,District=district,ParkDesc=parking_desc,Lng=longitude,Lat=latitude,ServicePrice=serve_fee,ElectricPrice=dc_costfee+ac_costfee,SiteGuide=office_description,OperationTime=open_forbusiness_date,"/>
@@ -8,7 +8,7 @@
   <Friend Class="ChargerLink" Name="充电网" Company="充电网" URL="http://www.chargerlink.com/" Description="" />
   <Friend Class="CNMaps" Name="充电桩" Company="CNMaps" URL="http://www.cnmaps.net/" Description="" Headers="编号,省,市,名称,地址,桩个数" HeadersWidth="10,15,15,30,30" HeadersAlignment="l,l,l,l,l,r" />
   <Friend Class="DuDuChong" Name="度度充" Company="度度充" URL="http://www.duduchong.com" Description="" Headers="编号,名称,地址,桩个数" HeadersWidth="40,30,60" HeadersAlignment="l,l,l,r"/>
-  <Friend Class="eChargeNet" Name="e充电" Company="国家电网" URL="http://www.echargenet.com" Description="" Headers="编号,省,市,地址,桩个数" HeadersWidth="40,10,10,70" HeadersAlignment="l,l,l,l,r"/>
+  <Friend Class="eChargeNet" Name="e充电" Company="国家电网" URL="http://www.echargenet.com" Description="" Headers="编号,省,市,电站,运营商,桩个数" HeadersWidth="40,10,10,60,10" HeadersAlignment="l,l,l,l,l,r"/>
   <Friend Class="eChong" Name="E充站" Company="上海依威能源" URL="http://www.evpowergroup.com" Description="" Headers="编号,城市,区,地址,安装时间" HeadersWidth="10,10,10,70" HeadersAlignment="l,l,l,l,l"/>
   <Friend Class="eiChong" Name="爱充网" Company="万马新能源" URL="http://www.eichong.com/html/" Description="" Headers="编号,省,市,电站,地址,桩个数" HeadersWidth="10,10,10,50,50" HeadersAlignment="l,l,l,l,l,r"/>
   <Friend Class="EnergeDog" Name="电狗" Company="电狗？" URL="http://121.42.53.24" Description="" Headers="编号,电站,纬度,经度" HeadersWidth="10,60,30" HeadersAlignment="l,l,l,l"/>

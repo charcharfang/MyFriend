@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyFriend.Shop;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,6 +15,7 @@ namespace Utility
 {
     public class Utils
     {
+        public static Dictionary<string, Tuple<string, string, string>> CityMappings = null;
         static Utils()
         {
             PATH = AppDomain.CurrentDomain.BaseDirectory + "data\\";
@@ -21,6 +23,28 @@ namespace Utility
             {
                 Directory.CreateDirectory(PATH);
             }
+
+            
+            
+            CityMappings = new Dictionary<string, Tuple<string, string, string>>();
+            var lines = File.ReadAllLines("citymapping.txt", Encoding.UTF8);
+            foreach (var line in lines)
+            {
+                try
+                {
+                    var tmp = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    CityMappings.Add(tmp[0], Tuple.Create(tmp[1], tmp[2], tmp[3]));
+                }
+                catch
+                {
+                    System.Diagnostics.Debug.WriteLine(line);
+                }
+            }
+            //一下四个是重复的，与本市重复，因为无其他地区
+            //441900,广东省,东莞市,市辖区
+            //442000,广东省,中山市,市辖区
+            //460300,海南省,三沙市,市辖区
+            //460400,海南省,儋州市,市辖区
         }
         public static string PATH = String.Empty;
         public static void WriteLog(string message)
@@ -164,26 +188,66 @@ namespace Utility
             return ret;
         }
 
-        public static string GetUnifiedDataStructureFormatter()
+        public static Tuple<string,string> GetUnifiedDataStructureFormatter(UnifiedDataStructure type)
         {
+            string name = "";
+            switch (type)
+            {
+                case UnifiedDataStructure.Station:
+                    name = "UnifiedDataStructureStation";
+                    break;
+                case UnifiedDataStructure.Order:
+                    name = "UnifiedDataStructureOrder";
+                    break;
+                default:
+                    break;
+            }
+               
             var shopcfg = AppDomain.CurrentDomain.BaseDirectory + "ShopItems.xml";
 
             var xml = new XmlDocument();
             xml.Load(shopcfg);
             var rootnode = xml.SelectSingleNode("/Friends");
-            var baseclass = rootnode.Attributes["UnifiedDataStructure"].Value;
+            var baseclass = rootnode.Attributes[name].Value;
 
             var formatter = Convert.ToString(baseclass);
             var tmp = formatter.Split(new char[] { ',' });
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();            
 
             for (int i = 0; i < tmp.Length; i++)
             {
-                sb.Append("{").Append(i).Append("}_CCF_");
+                sb.Append("{").Append(i).Append("}_CCF_");                
             }
             if (sb.Length > 0) sb.Remove(sb.Length-5, 5);
 
-            return sb.ToString() + "\r\n";
+            return Tuple.Create(formatter.Replace(",","_CCF_"),sb.ToString() + "\r\n");
+        }
+
+        public static string TimeStampDate
+        {
+            get
+            {
+                DateTime now = DateTime.Now;
+                return now.ToString("yyyy-MM-dd");
+            }
+        }
+
+        public static string TimeStampTime
+        {
+            get
+            {
+                DateTime now = DateTime.Now;
+                int y = now.Year;
+                int m = now.Month;
+                int d = now.Day;
+                int h = now.Hour;
+                int m2 = now.Minute;
+
+                //10分钟一次取整
+                m2 = m2 / 10 * 10;
+
+                return new DateTime(y,m,d,h,m2,0).ToString("yyyy-MM-dd HH:mm");
+            }
         }
     }
 

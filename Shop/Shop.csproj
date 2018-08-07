@@ -57,6 +57,7 @@
     <Compile Include="eCloudPower.cs" />
     <Compile Include="eiChong.cs" />
     <Compile Include="EnergeDog.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="evCharge.cs" />
     <Compile Include="EVChargeOnline.cs" />
     <Compile Include="Govlan.cs" />
@@ -93,8 +94,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="citymapping.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ShopItems.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="starcharge-stations.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
