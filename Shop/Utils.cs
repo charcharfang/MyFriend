@@ -211,7 +211,7 @@ namespace Utility
             var baseclass = rootnode.Attributes[name].Value;
 
             var formatter = Convert.ToString(baseclass);
-            var tmp = formatter.Split(new char[] { ',' });
+            var tmp = formatter.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries);
             StringBuilder sb = new StringBuilder();            
 
             for (int i = 0; i < tmp.Length; i++)
@@ -220,7 +220,7 @@ namespace Utility
             }
             if (sb.Length > 0) sb.Remove(sb.Length-5, 5);
 
-            return Tuple.Create(formatter.Replace(",","_CCF_"),sb.ToString() + "\r\n");
+            return Tuple.Create(formatter.Replace(",","_CCF_")+"\r\n",sb.ToString() + "\r\n");
         }
 
         public static string TimeStampDate
@@ -228,7 +228,7 @@ namespace Utility
             get
             {
                 DateTime now = DateTime.Now;
-                return now.ToString("yyyy-MM-dd");
+                return now.ToString("yyyyMMdd");
             }
         }
 
@@ -246,7 +246,7 @@ namespace Utility
                 //10分钟一次取整
                 m2 = m2 / 10 * 10;
 
-                return new DateTime(y,m,d,h,m2,0).ToString("yyyy-MM-dd HH:mm");
+                return new DateTime(y,m,d,h,m2,0).ToString("yyyyMMddHHmm00");
             }
         }
     }

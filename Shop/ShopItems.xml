@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Friends BaseClass="MyFriend.Shop" UnifiedDataStructureStation="时间戳,APP名称,运营商,电站编号,电站名称,省,市,区,电站地址,电站类型,运营类型,运营时间,电话,经度,纬度,总功率,快充总功率,慢充总功率,快充个数,慢充个数,电费,服务费,总费用,停车,指引,BD经度,BD纬度,电站评分,标签,支付方式" UnifiedDataStructureOrder="时间戳,APP名称,运营商,电站编号,电站名称,省,市,区,电站地址,电站类型,运营类型,运营时间,电话,经度,纬度,总功率,快充总功率,慢充总功率,快充个数,慢充个数,电费,服务费,总费用,停车,指引,BD经度,BD纬度,电站评分,标签,支付方式,设备编号,设备ID,桩状态,地锁状态,最大输出电压,最大输出功率,当前电压,当前电流,当前SOC">
+<Friends BaseClass="MyFriend.Shop" 
+         UnifiedDataStructureStation="时间戳,APP名称,运营商,电站编号,电站名称,省,市,区,电站地址,电站类型,运营类型,运营时间,电话,经度,纬度,总功率,快充总功率,慢充总功率,快充个数,慢充个数,电费,服务费,总费用,停车,指引,BD经度,BD纬度,电站评分,标签,支付方式,桩编号,桩名称,桩类型,桩状态,桩型号,额定电流,功率,电压上限,电压下限,辅源" 
+         UnifiedDataStructureOrder  ="时间戳,APP名称,运营商,电站编号,桩编号,实际电流,实际电压,SOC,电池温度,桩温度,枪温度,电量,订单编号,订单编号2,电表值,电表时间,开始充电时间"
+         >
   <Friend Class="_1Charge" Name="e车充电" Company="众业达" URL="http://www.1charge.cn" Description="" Headers="城市,编号,名称" HeadersWidth="10,10" HeadersAlignment="l,l,l"/>
   <Friend Class="_91ELian" Name="e驿充电" Company="珠海驿联新能源汽车" URL="http://91elian.com/" Description="泰坦下属公司"  Headers="编号,名称,桩个数,状态" HeadersWidth="40,60,10" HeadersAlignment="l,l,r,l" />
   <Friend Class="AnYoCharging" Name="安悦充电" Company="上汽安悦" URL="http://anyocharging.com/" Description=""  Headers="编号,名称,状态,交流个数,直流个数" HeadersWidth="10,90,10,15" HeadersAlignment="l,l,l,r,r" Mappings="ID=id,Name=name,Address=address,Operator=provider,FastCount=fast_cnt,SlowCount=slow_cnt,Star=score,Province=province,City=city,District=district,ParkDesc=parking_desc,Lng=longitude,Lat=latitude,ServicePrice=serve_fee,ElectricPrice=dc_costfee+ac_costfee,SiteGuide=office_description,OperationTime=open_forbusiness_date,"/>

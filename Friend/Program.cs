@@ -22,12 +22,11 @@ namespace MyFriend.Friend
         static string cmd = "";
         static string app = "";
         static string type = "";
-
+        static string filter = "";
 
         static void Main(string[] args)
         {
-
-            if (!IsValidArgument(args, out cmd, out app, out type)) return;
+            if (!IsValidArgument(args, out cmd, out app, out type,out filter)) return;
 
             InitAll();
             switch (cmd)
@@ -36,7 +35,7 @@ namespace MyFriend.Friend
                     EnterListMode();
                     break;
                 case "dump":
-                    DoDump(app, type);
+                    DoDump(app, type,filter);
                     break;
                 default:
                     EnterListMode();
@@ -46,7 +45,7 @@ namespace MyFriend.Friend
             return;
         }
 
-        private static void DoDump(string app, string type)
+        private static void DoDump(string app, string type, string filter)
         {
             Utils.WriteLog("开始dump数据");
             var clslist = app.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
@@ -56,7 +55,7 @@ namespace MyFriend.Friend
                 if (app.ToLower() == "all")
                 {
                     Utils.WriteLog("\tDump " + item.Value.Name);                    
-                    DoDumpFriend(item.Value, type);
+                    DoDumpFriend(item.Value, type, filter);
                 }
                 else
                 {
@@ -66,7 +65,7 @@ namespace MyFriend.Friend
                         if (cls.ToLower() == friend.ToLower())
                         {
                             Utils.WriteLog("\tDump " + item.Value.Name);
-                            DoDumpFriend(item.Value, type);
+                            DoDumpFriend(item.Value, type,filter);
                         }
                     }
                 }
@@ -110,13 +109,14 @@ namespace MyFriend.Friend
                 }
             }
         }
-        private static bool IsValidArgument(string[] args, out string cmd, out string app, out string type)
+        private static bool IsValidArgument(string[] args, out string cmd, out string app, out string type,out string filter)
         {
             cmd = "list";
             app = "all";
             type = "station";
+            filter = "";
 
-            if (args.Length != 0 && args.Length != 2 && args.Length != 4 && args.Length != 6)
+            if (args.Length != 0 && args.Length != 2 && args.Length != 4 && args.Length != 6 && args.Length!=8)
             {
                 goto INVALID;
             }
@@ -136,6 +136,9 @@ namespace MyFriend.Friend
                         type = args[i + 1].ToLower().Trim();
                         if (type != "station" && type != "order") goto INVALID;
                         continue;
+                    case "-filter":
+                        filter = args[i + 1].ToLower().Trim();
+                        continue;
                     default:
                         goto INVALID;
                 }
@@ -153,7 +156,7 @@ namespace MyFriend.Friend
         private static void ShowHelp()
         {
             Console.WriteLine("");
-            Console.WriteLine("用法 : MF -cmd <LIST|DUMP> -app <[ALL]|[APP1+APP2+APPN]> -type <Station|Order>");
+            Console.WriteLine("用法 : MF -cmd <LIST|DUMP> -app <[ALL]|[APP1+APP2+APPN]> -type <Station|Order> -filter <filters>");
             Console.WriteLine("");
             Console.WriteLine("       -cmd");
             Console.WriteLine("       |-不输入，则进入list模式");
@@ -170,28 +173,32 @@ namespace MyFriend.Friend
             Console.WriteLine("       |-order，取桩明细信息，有的可以取到实时输出电流、电压、SOC");
             Console.WriteLine("       |-当command是list时，此参数无效");
             Console.WriteLine("");
+            Console.WriteLine("       -filter");
+            Console.WriteLine("       |-现在只对type=order有效，星星的暂时忽略，只对国网");
+            Console.WriteLine("       |-具体由每个shopitem自己来解释。比如国网，可以为北京,天津,广州,上海，意味着只取这四个城市的数据");
+            Console.WriteLine("");
 
             Console.WriteLine("举例：");
             Console.WriteLine("     mf，进入list模式，可以交互");
-            Console.WriteLine("     mf -cmd dump，处理所有插件中的APP并保存数据到data目录下");
-            Console.WriteLine("     mf -cmd dump -app eChargeNet|StarCharge|AnYoCharging|eiChong，把充电网、星星、安悦、万马的数据保存到data目录下");
+            Console.WriteLine("     mf -cmd dump，处理所有插件中的APP并保存电站数据到data目录下");
+            Console.WriteLine("     mf -cmd dump -app eChargeNet+StarCharge+AnYoCharging+eiChong，把充电网、星星、安悦、万马的电站数据保存到data目录下");
+            Console.WriteLine("     mf -cmd dump -app eChargeNet+StarCharge -type order -filter 北京,天津,广州,上海，把充电网、星星的订单数据保存到data目录下，国网取北上广深的数据");
             Console.WriteLine("");
         }
-        private static void DoDumpFriend(ShopItem item, string type)
+        private static void DoDumpFriend(ShopItem item, string type, string filter)
         {
-            var bigtext = GetBigtext(item);
-
             var t = item.Type;
             var obj = Activator.CreateInstance(t);
             string dump = String.Empty;
             string ts = String.Empty;
+            type = type.ToLower();
 
             if (type == "station")
             {
                 ts = Utils.TimeStampDate;
                 dump = Convert.ToString(t.InvokeMember("Transform2Station",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { bigtext, ts }
+                                null, obj, new object[] { GetBigtext(item), ts }
                             ));
             }
             else if (type == "order")
@@ -199,11 +206,11 @@ namespace MyFriend.Friend
                 ts = Utils.TimeStampTime;
                 dump = Convert.ToString(t.InvokeMember("Transform2Order",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { bigtext, ts }
+                                null, obj, new object[] { ts,filter }
                             ));
             }
 
-            File.WriteAllText(String.Format("data\\{0}_{1}.dmp", item.Class, ts), dump);
+            File.WriteAllText(String.Format("data\\{0}_{1}.{2}s", item.Class, ts,type), dump);
 
         }
 

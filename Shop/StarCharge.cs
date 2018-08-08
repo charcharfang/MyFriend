@@ -16,6 +16,8 @@ namespace MyFriend.Shop
         public string GetStationDetail(string staid)
         {
             var ret = GetStationDetailInternal(staid);
+            if (ret == "") return "";
+
             ret = JToken.Parse(ret).ToString(Newtonsoft.Json.Formatting.Indented);
 
             return ret;
@@ -23,6 +25,7 @@ namespace MyFriend.Shop
 
         private string GetStationDetailInternal(string staid)
         {
+            //Utils.WriteLog("Processing "+staid);
             //string url = "https://wx.starcharge.com/api/xcx.getStubGroup?FRAMEparams=%7B%22stubGroupId%22:%22" + staid + "%22,%22lat%22:36,%22lng%22:117%7D";
             //string data = "{}";
             //var ret = Utils.PostData(url, data);
@@ -32,15 +35,24 @@ namespace MyFriend.Shop
             //staid = "13c5bd63-af61-48ea-be99-566728d7d06d";
             string data = "FRAMEparams=%7B%22id%22%3A%22" + staid + "%22%2C%22gisType%22%3A%221%22%2C%22lat%22%3A%220%22%2C%22lng%22%3A%220%22%2C%22userId%22%3A%22586df5d4-1a05-4f4f-b94a-1dbe95d6c9e9%22%2C%22tabType%22%3A0%7D";
 
-            var ret = Utils.PostData(url, data
-                //headers:new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
-                //cookies:new List<Cookie>(){
-                //    new Cookie("SERVERID","b47c9cbf6504664a1b28cd9324d36d5e|1533258390|1533258360","/","app.starcharge.com"),
-                //    new Cookie("JSESSIONID","8D5F2E3B34951EACD2EBA6013FD1F2C8","/","app.starcharge.com")
-                //},
-                //userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
-                );
-            return ret;
+            try
+            {
+                var ret = Utils.PostData(url, data
+                    //headers:new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
+                    //cookies:new List<Cookie>(){
+                    //    new Cookie("SERVERID","b47c9cbf6504664a1b28cd9324d36d5e|1533258390|1533258360","/","app.starcharge.com"),
+                    //    new Cookie("JSESSIONID","8D5F2E3B34951EACD2EBA6013FD1F2C8","/","app.starcharge.com")
+                    //},
+                    //userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
+                    );
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteLog(staid);
+                Utils.WriteLog(ex.Message);
+                return "";
+            }
         }
 
         private string GetStationsByCity(string city)
@@ -79,15 +91,15 @@ namespace MyFriend.Shop
 
         public string[] GetStationsID()
         {
-            var lines = File.ReadAllLines("data\\starcharge-stations.txt", Encoding.UTF8);
+            var lines = File.ReadAllLines("starcharge-stations.txt", Encoding.UTF8);
             //Array.Copy(lines, 1,
-            string patch = "data\\starcharge-stations-patch.txt";
+            string patch = "starcharge-stations-patch.txt";
             FileInfo fi = new FileInfo(patch);
 
             DateTime time1 = DateTime.Parse(lines[0]);
             DateTime time2 = fi.LastWriteTime;
 
-            if ((time2 - time1).TotalMinutes > 0)
+            if ((time2 - time1).TotalMinutes > 1)
             {
                 var patchtext = File.ReadAllText(patch, Encoding.GetEncoding("gb2312"));
                 var array = (JsonConvert.DeserializeObject(patchtext) as JToken)["data"] as JArray;
@@ -108,7 +120,7 @@ namespace MyFriend.Shop
                     Array.Copy(lines, 1, newlines, 1, lines.Length - 1);
                     Array.Copy(patches.ToArray(), 0, newlines, lines.Length, patches.Count);
 
-                    File.WriteAllLines("data\\starcharge-stations.txt", newlines, Encoding.UTF8);
+                    File.WriteAllLines("starcharge-stations.txt", newlines, Encoding.UTF8);
 
                     return newlines;
                 }
@@ -124,6 +136,7 @@ namespace MyFriend.Shop
             foreach (var staid in stations)
             {
                 var s = GetStationDetailInternal(staid);
+                if (s == "") continue;
                 sb.AppendLine(s);
             }
 
@@ -167,75 +180,10 @@ namespace MyFriend.Shop
             for (int i = 1; i < all.Length; i++)
             {
                 var s = (JsonConvert.DeserializeObject(all[i]) as JToken)["data"];
-                if (Convert.ToString(s)=="") continue;
+                if (Convert.ToString(s) == "") continue;
                 var key = Convert.ToString(s["city"]);
 
-                #region FuckedRegionTransform
-                //傻逼星星，这么多不规范的编码！
-                //法克鱿！你娘的用的哪年的编码表？
-                if (key == "110200") key = "110100";
-                else if (key == "120200") key = "120100";
-                else if (key == "120107") key = "120116";
-                else if (key == "310200") key = "310151";
-                else if (key == "500300") key = "500200";
-                else if (key == "341400") key = "340181";
-                else if (key == "522200") key = "520600";
-                else if (key == "522400") key = "520500";
-                else if (key == "542100") key = "540300";
-                else if (key == "542200") key = "540500";
-                else if (key == "542300") key = "540200";
-                else if (key == "542600") key = "540400";
-                else if (key == "632100") key = "630200";
-                else if (key == "652100") key = "650400";
-                else if (key == "652200") key = "650500";
-                else if (key == "810100") key = "810000";
-                else if (key == "820100") key = "820000";
-                else if (key == "441901") key = "441900";
-                else if (key == "320482") key = "320413";
-                else if (key == "310230") key = "310115";
-                else if (key == "120109") key = "120116";
-                else if (key == "320504") key = "320508";
-                else if (key == "320502") key = "320508";
-                else if (key == "320125") key = "320118";
-                else if (key == "320124") key = "320117";
-                else if (key == "320721") key = "320707";
-                else if (key == "320584") key = "320509";
-                else if (key == "110228") key = "110108";
-                else if (key == "110229") key = "110119";
-                else if (key == "320705") key = "320706";
-                else if (key == "360122") key = "360112";
-                else if (key == "321190") key = "321102";
-                else if (key == "321088") key = "321012";
-                else if (key == "320390") key = "320303";
-                else if (key == "320323") key = "320312";
-                else if (key == "532621") key = "532601";
-                else if (key == "469035") key = "469029";
-                else if (key == "320503") key = "320508";
-                else if (key == "511821") key = "511803";
-                else if (key == "320405") key = "320412";
-                else if (key == "522401") key = "520502";
-
-                else if (key == "130603") key = "130606";
-                else if (key == "120108") key = "120116";
-                else if (key == "330682") key = "330604";
-                else if (key == "469033") key = "469027";
-                else if (key == "360782") key = "360703";
-                else if (key == "510122") key = "510116";
-                else if (key == "532526") key = "532504";
-                else if (key == "512081") key = "510185";
-                else if (key == "610126") key = "610117";
-                else if (key == "469034") key = "469028";
-                else if (key == "410307") key = "410311";
-                else if (key == "442001") key = "442000";
-                else if (key == "330183") key = "330111";
-                else if (key == "450122") key = "450110";
-                else if (key == "441421") key = "441403";
-                else if (key == "430122") key = "430112";
-                else if (key == "810107") key = "810007";
-                else if (key == "370802") key = "370801";
-                else if (key == "320811") key = "320812";
-                else if (key == "330621") key = "330601";
-                #endregion FuckedRegionTransform
+                key = ConvertFuckedCitycode(key);
 
                 var province = Utils.CityMappings[key].Item1;
                 var city = Utils.CityMappings[key].Item2;
@@ -264,38 +212,52 @@ namespace MyFriend.Shop
                     }
                 }
 
-                sb.AppendFormat(tuple.Item2,
-                    ts,//时间戳
-                    "星星充电",//APP名称
-                    Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
-                    Convert.ToString(s["id"]),//电站编号
-                    Convert.ToString(s["name"]),//电站名称
-                    province,//省
-                    city,//市
-                    district,//区
-                    Convert.ToString(s["address"]),//电站地址
-                    GetStubGroupType(Convert.ToString(s["stubGroupType"])),//电站类型
-                    GetOperationType(Convert.ToString(s["type"])),//运营类型
-                    Convert.ToString(s["serviceTime"]),//运营时间
-                    "",//电话
-                    Convert.ToString(s["gisGcj02Lng"]),//经度
-                    Convert.ToString(s["gisGcj02Lat"]),//纬度
-                    Convert.ToString(fastkw + slowkw),//总功率
-                    Convert.ToString(fastkw),//快充总功率
-                    Convert.ToString(slowkw),//慢充总功率
-                    nfast.ToString(),//快充个数
-                    nslow.ToString(),//慢充个数
-                    "",//电费
-                    "",//服务费
-                    Convert.ToString(s["totalFeeInfo"]),//#总费用
-                    Convert.ToString(s["parkingFeeInfo"]),//停车
-                    Convert.ToString(s["parkingInfo"]),//指引
-                    Convert.ToString(s["gisGcj02Lng"]),//BD经度
-                    Convert.ToString(s["gisGcj02Lat"]),//BD纬度
-                    Convert.ToString(s["scoreAverage"]),//电站评分
-                    "",//标签
-                    Convert.ToString(s["paymentType"])//支付方式
-                );
+                foreach (var pile in array)
+                {
+                    sb.AppendFormat(tuple.Item2,
+                        ts,//时间戳
+                        "星星充电",//APP名称
+                        Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
+                        Convert.ToString(s["id"]),//电站编号
+                        Convert.ToString(s["name"]),//电站名称
+                        province,//省
+                        city,//市
+                        district,//区
+                        Convert.ToString(s["address"]),//电站地址
+                        GetStubGroupType(Convert.ToString(s["stubGroupType"])),//电站类型
+                        GetOperationType(Convert.ToString(s["type"])),//运营类型
+                        Convert.ToString(s["serviceTime"]),//运营时间
+                        "",//电话
+                        Convert.ToString(s["gisGcj02Lng"]),//经度
+                        Convert.ToString(s["gisGcj02Lat"]),//纬度
+                        Convert.ToString(fastkw + slowkw),//总功率
+                        Convert.ToString(fastkw),//快充总功率
+                        Convert.ToString(slowkw),//慢充总功率
+                        nfast.ToString(),//快充个数
+                        nslow.ToString(),//慢充个数
+                        "",//电费
+                        "",//服务费
+                        Convert.ToString(s["totalFeeInfo"]),//#总费用
+                        Convert.ToString(s["parkingFeeInfo"]),//停车
+                        Convert.ToString(s["parkingInfo"]),//指引
+                        Convert.ToString(s["gisGcj02Lng"]),//BD经度
+                        Convert.ToString(s["gisGcj02Lat"]),//BD纬度
+                        Convert.ToString(s["scoreAverage"]),//电站评分
+                        "",//标签
+                        Convert.ToString(s["paymentType"]),//支付方式,
+
+                        Convert.ToString(pile["id"]),//桩编号
+                        Convert.ToString(pile["name"]),//桩名称
+                        Convert.ToString(pile["type"]),//桩类型
+                        Convert.ToString(pile["status"]),//桩状态
+                        Convert.ToString(pile["modelNo"]),//桩型号
+                        Convert.ToString(pile["ratedCurrent"]),//额定电流
+                        Convert.ToString(pile["kw"]),//功率
+                        Convert.ToString(pile["voltageUpperLimit"]),//电压上限
+                        Convert.ToString(pile["voltageLowerLimit"]),//电压下限
+                        Convert.ToString(pile["voltageAuxiliary"])//辅源
+                    );
+                }
             }
 
             return sb.ToString();
@@ -314,9 +276,130 @@ namespace MyFriend.Shop
             else return type;
         }
 
-        public string Transform2Order(string bigtext)
+        private string ConvertFuckedCitycode(string key)
         {
-            return "";
+            //傻逼星星，这么多不规范的编码！
+            //法克鱿！你娘的用的哪年的编码表？
+            if (key == "110200") key = "110100";
+            else if (key == "120200") key = "120100";
+            else if (key == "120107") key = "120116";
+            else if (key == "310200") key = "310151";
+            else if (key == "500300") key = "500200";
+            else if (key == "341400") key = "340181";
+            else if (key == "522200") key = "520600";
+            else if (key == "522400") key = "520500";
+            else if (key == "542100") key = "540300";
+            else if (key == "542200") key = "540500";
+            else if (key == "542300") key = "540200";
+            else if (key == "542600") key = "540400";
+            else if (key == "632100") key = "630200";
+            else if (key == "652100") key = "650400";
+            else if (key == "652200") key = "650500";
+            else if (key == "810100") key = "810000";
+            else if (key == "820100") key = "820000";
+            else if (key == "441901") key = "441900";
+            else if (key == "320482") key = "320413";
+            else if (key == "310230") key = "310115";
+            else if (key == "120109") key = "120116";
+            else if (key == "320504") key = "320508";
+            else if (key == "320502") key = "320508";
+            else if (key == "320125") key = "320118";
+            else if (key == "320124") key = "320117";
+            else if (key == "320721") key = "320707";
+            else if (key == "320584") key = "320509";
+            else if (key == "110228") key = "110108";
+            else if (key == "110229") key = "110119";
+            else if (key == "320705") key = "320706";
+            else if (key == "360122") key = "360112";
+            else if (key == "321190") key = "321102";
+            else if (key == "321088") key = "321012";
+            else if (key == "320390") key = "320303";
+            else if (key == "320323") key = "320312";
+            else if (key == "532621") key = "532601";
+            else if (key == "469035") key = "469029";
+            else if (key == "320503") key = "320508";
+            else if (key == "511821") key = "511803";
+            else if (key == "320405") key = "320412";
+            else if (key == "522401") key = "520502";
+
+            else if (key == "130603") key = "130606";
+            else if (key == "120108") key = "120116";
+            else if (key == "330682") key = "330604";
+            else if (key == "469033") key = "469027";
+            else if (key == "360782") key = "360703";
+            else if (key == "510122") key = "510116";
+            else if (key == "532526") key = "532504";
+            else if (key == "512081") key = "510185";
+            else if (key == "610126") key = "610117";
+            else if (key == "469034") key = "469028";
+            else if (key == "410307") key = "410311";
+            else if (key == "442001") key = "442000";
+            else if (key == "330183") key = "330111";
+            else if (key == "450122") key = "450110";
+            else if (key == "441421") key = "441403";
+            else if (key == "430122") key = "430112";
+            else if (key == "810107") key = "810007";
+            else if (key == "370802") key = "370801";
+            else if (key == "320811") key = "320812";
+            else if (key == "330621") key = "330601";
+
+            return key;
+        }
+        public string Transform2Order(string ts, string filter)
+        {
+            //Filter这里不用
+            var tuple = Utils.GetUnifiedDataStructureFormatter(UnifiedDataStructure.Order);
+
+            List<List<string>> list = new List<List<string>>();
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(tuple.Item1);
+            var bigtext = GetStations();
+
+            string[] all = bigtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 1; i < all.Length; i++)
+            {
+                var s = (JsonConvert.DeserializeObject(all[i]) as JToken)["data"];
+                if (Convert.ToString(s) == "") continue;
+                var key = Convert.ToString(s["city"]);
+
+                key = ConvertFuckedCitycode(key);
+
+                var province = Utils.CityMappings[key].Item1;
+                var city = Utils.CityMappings[key].Item2;
+                var district = Utils.CityMappings[key].Item3;
+
+                var array = s["stubList"] as JArray;
+
+                foreach (var pile in array)
+                {
+                    var stub = pile["stubInfo"];
+                    if (Convert.ToString(stub["orderId"]) == "") continue;
+
+                    sb.AppendFormat(tuple.Item2,
+                        ts,//时间戳
+                        "星星充电",//APP名称
+                        Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
+                        Convert.ToString(s["id"]),//电站编号
+                        Convert.ToString(pile["id"]),//桩编号
+                        Convert.ToString(stub["currentO"]),//实际电流
+                        Convert.ToString(stub["voltageO"]),//实际电压
+                        Convert.ToString(stub["chargeSoc"]),//SOC
+                        Convert.ToString(stub["tempCar"]),//电池温度
+                        Convert.ToString(stub["tempStub"]),//桩温度
+                        Convert.ToString(stub["tempGun"]),//枪温度
+                        Convert.ToString(stub["chargePower"]),//电量
+                        Convert.ToString(stub["orderId"]),//订单编号
+                        Convert.ToString(stub["orderId2"]),//订单编号2
+                        Convert.ToString(stub["electric"]),//电表值
+                        Convert.ToString(stub["electricTime"]),//电表时间
+                        Convert.ToString(stub["chargeStartTime"])//开始充电时间
+                    );
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

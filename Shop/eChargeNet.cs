@@ -55,6 +55,15 @@ namespace MyFriend.Shop
 
         public string GetStations()
         {
+            string ret = String.Empty;
+
+            var fname = String.Format("data\\echargenet_stations_{0}.cache", Utils.TimeStampDate);
+            if (File.Exists(fname))
+            {
+                ret = File.ReadAllText(fname);
+                return ret;
+            }
+
             var ret1 = GetCorrespondingStations("echargenet");
             var ret2 = GetCorrespondingStations("echargenet_third");
 
@@ -72,7 +81,9 @@ namespace MyFriend.Shop
                 array.Add(s);
             }
 
-            var ret = JsonConvert.SerializeObject(array);
+            ret = JsonConvert.SerializeObject(array);
+            File.WriteAllText(fname, ret);
+
             return ret;
         }
 
@@ -157,38 +168,141 @@ namespace MyFriend.Shop
                 }
                 int opetype = Convert.ToInt32(s["operatorTypes"]);
 
-                sb.AppendFormat(tuple.Item2,
-                        ts,//时间戳
-                        "e充电",//APP名称
-                        GetOperatorName(opetype, s["company"].ToString()),//运营商
-                        Convert.ToString(s["id"]),//电站编号
-                        Convert.ToString(s["company"]),//电站名称
-                        s["province"],//省
-                        s["city"],//市
-                        "",//区
-                        Convert.ToString(s["address"]),//电站地址
-                        "",//电站类型
-                        (opetype==1)?"自营":"非自营",//运营类型
-                        "",//运营时间
-                        "",//电话
-                        Convert.ToString(s["lng"]),//经度
-                        Convert.ToString(s["lat"]),//纬度
-                        Convert.ToString(fastkw + slowkw),//总功率
-                        Convert.ToString(fastkw),//快充总功率
-                        Convert.ToString(slowkw),//慢充总功率
-                        Convert.ToString(nfast),//快充个数
-                        Convert.ToString(nslow),//慢充个数
-                        "",//电费
-                        "",//服务费
-                        chargedesc,//#总费用
-                        "",//停车
-                        area,//指引
-                        "",//BD经度
-                        "",//BD纬度
-                        "",//电站评分
-                        "",//标签
-                        payinfo//支付方式
-                    );
+                foreach (var pilegroup in array)
+                {
+                    foreach (var pile in pilegroup["equipments"])
+                    {
+                        sb.AppendFormat(tuple.Item2,
+                            ts,//时间戳
+                            "e充电",//APP名称
+                            GetOperatorName(opetype, s["company"].ToString()),//运营商
+                            Convert.ToString(s["id"]),//电站编号
+                            Convert.ToString(s["company"]),//电站名称
+                            s["province"],//省
+                            s["city"],//市
+                            "",//区
+                            Convert.ToString(s["address"]),//电站地址
+                            "",//电站类型
+                            (opetype == 1) ? "自营" : "非自营",//运营类型
+                            "",//运营时间
+                            "",//电话
+                            Convert.ToString(s["lng"]),//经度
+                            Convert.ToString(s["lat"]),//纬度
+                            Convert.ToString(fastkw + slowkw),//总功率
+                            Convert.ToString(fastkw),//快充总功率
+                            Convert.ToString(slowkw),//慢充总功率
+                            Convert.ToString(nfast),//快充个数
+                            Convert.ToString(nslow),//慢充个数
+                            "",//电费
+                            "",//服务费
+                            chargedesc,//#总费用
+                            "",//停车
+                            area,//指引
+                            "",//BD经度
+                            "",//BD纬度
+                            "",//电站评分
+                            "",//标签
+                            payinfo,//支付方式
+
+                            Convert.ToString(pile["equipNo"]),//桩编号
+                        Convert.ToString(pile["equipNo"]),//桩名称
+                        "",//桩类型
+                        Convert.ToString(pile["status"]),//桩状态
+                        "",//桩型号
+                        "",//额定电流
+                        Convert.ToString(pile["outPower"]),//功率
+                        Convert.ToString(pile["outVolt"]),//电压上限
+                        Convert.ToString(pile["outVolt"]),//电压下限
+                        ""//辅源
+                        );
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public string Transform2Order(string ts, string filter)
+        {
+            var bigtext = GetStations();
+
+            var tuple = Utils.GetUnifiedDataStructureFormatter(UnifiedDataStructure.Order);
+
+            List<List<string>> list = new List<List<string>>();
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(tuple.Item1);
+
+            var stations = (JsonConvert.DeserializeObject(bigtext) as JToken) as JArray;
+            string[] citylist = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < stations.Count; i++)
+            {
+                bool matched = false;
+                var s = stations[i];
+                var city = Convert.ToString(s["city"]);
+
+                if (citylist.Length > 0)
+                {
+                    foreach (var c in citylist)
+                    {
+                        if (city.IndexOf(c) > -1)
+                        {
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    if (matched == false) continue;
+                }
+
+                var detail = GetStationDetailInternal(Convert.ToString(s["id"]));
+                var array = (JsonConvert.DeserializeObject(detail) as JToken)["data"] as JArray;
+                if (array == null)
+                {
+                    Utils.WriteLog("Array is null. " + JsonConvert.SerializeObject(s));
+                    continue;
+                }
+                string chargedesc = "", payinfo = "", area = "";
+                foreach (var pilegroup in array)
+                {
+                    foreach (var pile in pilegroup["equipments"])
+                    {
+                        int p = Convert.ToInt32(Convert.ToDouble(pile["outPower"]));
+
+                        chargedesc = Convert.ToString(pile["chargeDesc"]);
+                        payinfo = Convert.ToString(pile["payInfo"]);
+                        area = Convert.ToString(pile["area"]);
+                    }
+                }
+                int opetype = Convert.ToInt32(s["operatorTypes"]);
+
+                foreach (var pilegroup in array)
+                {
+                    foreach (var pile in pilegroup["equipments"])
+                    {
+                        if (Convert.ToString(pile["soc"]) == "--") continue;
+                        sb.AppendFormat(tuple.Item2,
+                            ts,//时间戳
+                            "e充电",//APP名称
+                            GetOperatorName(opetype, s["company"].ToString()),//运营商
+                            Convert.ToString(s["id"]),//电站编号
+                            Convert.ToString(pile["equipNo"]),//桩编号
+                            Convert.ToString(pile["current"]),//实际电流
+                            Convert.ToString(pile["voltage"]),//实际电压
+                            Convert.ToString(pile["soc"]),//SOC
+                            "",//电池温度
+                            "",//桩温度
+                            "",//枪温度
+                            "",//电量
+                            "",//订单编号
+                            "",//订单编号2
+                            "",//电表值
+                            "",//电表时间
+                            ""//开始充电时间
+                        );
+                    }
+                }
             }
 
             return sb.ToString();
