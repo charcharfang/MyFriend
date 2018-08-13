@@ -215,7 +215,6 @@ namespace MyFriend.Shop
                 foreach (var pile in array)
                 {
                     sb.AppendFormat(tuple.Item2,
-                        ts,//时间戳
                         "星星充电",//APP名称
                         Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
                         Convert.ToString(s["id"]),//电站编号
@@ -378,7 +377,7 @@ namespace MyFriend.Shop
                     if (Convert.ToString(stub["orderId"]) == "") continue;
 
                     sb.AppendFormat(tuple.Item2,
-                        ts,//时间戳
+                        ts,//时间戳`
                         "星星充电",//APP名称
                         Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
                         Convert.ToString(s["id"]),//电站编号

@@ -17,7 +17,7 @@ namespace MyFriend.Shop
         {
             //GetAvailableCityList();
             //貌似只返回前20个订单
-            string url = "https://epower.xiaojukeji.com/station-api/station/getoneinfo?fullstationid=" + staid + "&token=wP-B1I7diV3rll6CFnh0k0eQjLY8zdcWCS6J-8bwQGkkzDmKw0AQQNG7_LgQtaharUonnzvMIi9JG2wcCd_dCMf_83aGUsSkkyIMo0wYTrmqqjCCsiVXz1hVe0YXxkwdKSm-vhF-KBB-qeyas3szS1t6F_6pJmzUzuP2vP9tlL6EE2UZ1nw2NeFMYdlVI5p7IFw-5PXY3wEAAP__&lat=32.020966&lng=118.743457&userlat=31.26565088106128&userlng=121.52128222412895";
+            string url = "https://epower.xiaojukeji.com/station-api/station/getoneinfo?fullstationid=" + staid + "&token=hfa8PUlXINatfs78erJtpS_l1FevoIAKcH-1t1vHyackzDmKw0AQQNG7_LgQtaik7konnzvMIi9JG2wcCd_dCMf_83aGUsSkkyIMo0wYTrmqqjCCsjW7Z3TVltGEMVNHSoqvb4QfCoRfKpvm7L6Ypa2tCf9UFzZq53F73v82Sl_CibIMj97MZuFMYdlUIxb3QLh8yOuxvwMAAP__&lat=32.020966&lng=118.743457&userlat=31.26565088106128&userlng=121.52128222412895";
             using (WebClient wc = new WebClient())
             {
                 wc.Encoding = Encoding.UTF8;
@@ -40,13 +40,13 @@ namespace MyFriend.Shop
             for (int i = 0; i < gpsdata.Count; i += 2)
             {
                 string url = "https://epower.xiaojukeji.com/station-api/station/querylist";
-                string data = "{\"lat\":" + gpsdata[i + 1].ToString() + ",\"lng\":" + gpsdata[i].ToString() + ",\"type\":2,\"distance\":999,\"chargeTypeFast\":0,\"chargeTypeSlow\":0,\"undergroundTop\":0,\"undergroundBottom\":0,\"park\":0,\"shop\":0,\"bathroom\":0,\"canopy\":0,\"keeper\":0,\"recommend\":0,\"lounge\":0,\"owner\":\"map\",\"chargeType\":null,\"underground\":null,\"ownerChange\":false,\"token\":\"VEh0V6m5Jpw40u_Kz7kfyvid9vx2TCo78mJKY1eAFqJMxzkOglAQgOGrmL-eYhYGXuY2KLhUGF6MBeHutpbfwUyBcKWyaQ7uo1na1JqwUIOwUseFvn3220qp8J57_277QlmG5Wgx-Snc_y08KCybasToHghPCkV4UXr-AgAA__8=\",\"userlat\":39.90449873823792,\"userlng\":116.4069765424048}";
+                string data = "{\"lat\":" + gpsdata[i + 1].ToString() + ",\"lng\":" + gpsdata[i].ToString() + ",\"type\":2,\"distance\":999,\"chargeTypeFast\":0,\"chargeTypeSlow\":0,\"undergroundTop\":0,\"undergroundBottom\":0,\"park\":0,\"shop\":0,\"bathroom\":0,\"canopy\":0,\"keeper\":0,\"recommend\":0,\"lounge\":0,\"owner\":\"map\",\"chargeType\":null,\"underground\":null,\"ownerChange\":false,\"token\":\"hfa8PUlXINatfs78erJtpS_l1FevoIAKcH-1t1vHyackzDmKw0AQQNG7_LgQtaik7konnzvMIi9JG2wcCd_dCMf_83aGUsSkkyIMo0wYTrmqqjCCsjW7Z3TVltGEMVNHSoqvb4QfCoRfKpvm7L6Ypa2tCf9UFzZq53F73v82Sl_CibIMj97MZuFMYdlUIxb3QLh8yOuxvwMAAP__\",\"userlat\":39.90449873823792,\"userlng\":116.4069765424048}";
 
                 var ret = Utils.PostData(url, data,
                     cookies: new List<Cookie>() {
-                    new Cookie("omgh5sid","970523391850-1531561550832","/", "epower.xiaojukeji.com"),
-                    new Cookie("omgtrc","-1910293759674151314","/", "epower.xiaojukeji.com"),
-                    new Cookie("ticket","VEh0V6m5Jpw40u_Kz7kfyvid9vx2TCo78mJKY1eAFqJMxzkOglAQgOGrmL-eYhYGXuY2KLhUGF6MBeHutpbfwUyBcKWyaQ7uo1na1JqwUIOwUseFvn3220qp8J57_277QlmG5Wgx-Snc_y08KCybasToHghPCkV4UXr-AgAA__8=","/", "epower.xiaojukeji.com"),
+                    new Cookie("omgh5sid","276033450616-1531739609058","/", "epower.xiaojukeji.com"),
+                    new Cookie("omgtrc","7854580928785817033","/", "epower.xiaojukeji.com"),
+                    new Cookie("ticket","hfa8PUlXINatfs78erJtpS_l1FevoIAKcH-1t1vHyackzDmKw0AQQNG7_LgQtaik7konnzvMIi9JG2wcCd_dCMf_83aGUsSkkyIMo0wYTrmqqjCCsjW7Z3TVltGEMVNHSoqvb4QfCoRfKpvm7L6Ypa2tCf9UFzZq53F73v82Sl_CibIMj97MZuFMYdlUIxb3QLh8yOuxvwMAAP__","/", "epower.xiaojukeji.com"),
                     },
                     headers: new Dictionary<string, string>() { { "X-Requested-With", "com.sdu.didi.gsui" } },
                     userAgent: "Mozilla/5.0 (Linux; Android 4.4.4; MuMu Build/V417IR) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/33.0.0.0 Safari/537.36 FusionKit/2.0.0_didigsui_900_1600_MuMu-cancro_19_4.4.4_5.1.12_303",

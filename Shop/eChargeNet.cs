@@ -173,7 +173,6 @@ namespace MyFriend.Shop
                     foreach (var pile in pilegroup["equipments"])
                     {
                         sb.AppendFormat(tuple.Item2,
-                            ts,//时间戳
                             "e充电",//APP名称
                             GetOperatorName(opetype, s["company"].ToString()),//运营商
                             Convert.ToString(s["id"]),//电站编号
