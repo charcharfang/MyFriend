@@ -190,8 +190,27 @@ namespace MyFriend.Shop
                 var district = Utils.CityMappings[key].Item3;
 
                 var array = s["stubList"] as JArray;
-                int fastkw = 0, slowkw = 0;
-                int nfast = 0, nslow = 0;
+                //int fastkw = 0, slowkw = 0;
+                //int nfast = 0, nslow = 0;
+
+                //foreach (var pile in array)
+                //{
+                //    string name = Convert.ToString(pile["name"]);
+                //    int kw = Convert.ToInt32(pile["kw"]);
+
+                //    if (name.Length == 13) kw = kw / 2;
+
+                //    if (kw > 7)
+                //    {
+                //        fastkw += kw;
+                //        nfast++;
+                //    }
+                //    else
+                //    {
+                //        slowkw += kw;
+                //        nslow++;
+                //    }
+                //}
 
                 foreach (var pile in array)
                 {
@@ -200,20 +219,6 @@ namespace MyFriend.Shop
 
                     if (name.Length == 13) kw = kw / 2;
 
-                    if (kw > 7)
-                    {
-                        fastkw += kw;
-                        nfast++;
-                    }
-                    else
-                    {
-                        slowkw += kw;
-                        nslow++;
-                    }
-                }
-
-                foreach (var pile in array)
-                {
                     sb.AppendFormat(tuple.Item2,
                         "星星充电",//APP名称
                         Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
@@ -229,11 +234,11 @@ namespace MyFriend.Shop
                         "",//电话
                         Convert.ToString(s["gisGcj02Lng"]),//经度
                         Convert.ToString(s["gisGcj02Lat"]),//纬度
-                        Convert.ToString(fastkw + slowkw),//总功率
-                        Convert.ToString(fastkw),//快充总功率
-                        Convert.ToString(slowkw),//慢充总功率
-                        nfast.ToString(),//快充个数
-                        nslow.ToString(),//慢充个数
+                        0,//Convert.ToString(fastkw + slowkw),//总功率
+                        (kw>7)?kw:0,//快充总功率
+                        (kw<=7)?kw:0,//慢充总功率
+                        (kw>7)?1:0,
+                        (kw<=7)?1:0,
                         "",//电费
                         "",//服务费
                         Convert.ToString(s["totalFeeInfo"]),//#总费用
