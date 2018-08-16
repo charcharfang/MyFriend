@@ -48,26 +48,40 @@ namespace MyFriend.Friend
         private static void DoDump(string app, string type, string filter)
         {
             Utils.WriteLog("开始dump数据");
-            var clslist = app.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var item in shoplist)
+            try
             {
-                if (app.ToLower() == "all")
+                //throw new Exception("hello");
+                var clslist = app.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var item in shoplist)
                 {
-                    Utils.WriteLog("\tDump " + item.Value.Name);                    
-                    DoDumpFriend(item.Value, type, filter);
-                }
-                else
-                {
-                    var cls = item.Value.Class;
-                    foreach (var friend in clslist)
+                    if (app.ToLower() == "all")
                     {
-                        if (cls.ToLower() == friend.ToLower())
+                        Utils.WriteLog("\tDump " + item.Value.Name);
+                        DoDumpFriend(item.Value, type, filter);
+                    }
+                    else
+                    {
+                        var cls = item.Value.Class;
+                        foreach (var friend in clslist)
                         {
-                            Utils.WriteLog("\tDump " + item.Value.Name);
-                            DoDumpFriend(item.Value, type,filter);
+                            if (cls.ToLower() == friend.ToLower())
+                            {
+                                Utils.WriteLog("\tDump " + item.Value.Name);
+                                DoDumpFriend(item.Value, type, filter);
+                            }
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteLog("!!!!!错误!!!!!");
+                for (Exception ex2 = ex; ex2 != null; ex2 = ex.InnerException)
+                {
+                    Utils.WriteLog(ex2.Message);
+                    Utils.WriteLog(ex2.StackTrace);
+                    Utils.WriteLog("");
                 }
             }
             Utils.WriteLog("完成Dump数据");
