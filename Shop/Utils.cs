@@ -24,8 +24,8 @@ namespace Utility
                 Directory.CreateDirectory(PATH);
             }
 
-            
-            
+
+
             CityMappings = new Dictionary<string, Tuple<string, string, string>>();
             var lines = File.ReadAllLines("citymapping.txt", Encoding.UTF8);
             foreach (var line in lines)
@@ -73,6 +73,7 @@ namespace Utility
             request.Method = "POST";
             request.ContentType = contentType;
             request.Accept = accept;
+            request.Timeout = 1000;
 
             if (headers != null)
             {
@@ -188,7 +189,7 @@ namespace Utility
             return ret;
         }
 
-        public static Tuple<string,string> GetUnifiedDataStructureFormatter(UnifiedDataStructure type)
+        public static Tuple<string, string> GetUnifiedDataStructureFormatter(UnifiedDataStructure type)
         {
             string name = "";
             switch (type)
@@ -202,7 +203,7 @@ namespace Utility
                 default:
                     break;
             }
-               
+
             var shopcfg = AppDomain.CurrentDomain.BaseDirectory + "ShopItems.xml";
 
             var xml = new XmlDocument();
@@ -211,16 +212,16 @@ namespace Utility
             var baseclass = rootnode.Attributes[name].Value;
 
             var formatter = Convert.ToString(baseclass);
-            var tmp = formatter.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries);
-            StringBuilder sb = new StringBuilder();            
+            var tmp = formatter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < tmp.Length; i++)
             {
-                sb.Append("{").Append(i).Append("}_CCF_");                
+                sb.Append("{").Append(i).Append("}_CCF_");
             }
-            if (sb.Length > 0) sb.Remove(sb.Length-5, 5);
+            if (sb.Length > 0) sb.Remove(sb.Length - 5, 5);
 
-            return Tuple.Create(formatter.Replace(",","_CCF_")+"\r\n",sb.ToString() + "\r\n");
+            return Tuple.Create(formatter.Replace(",", "_CCF_") + "\r\n", sb.ToString() + "\r\n");
         }
 
         public static string TimeStampDate
@@ -246,7 +247,7 @@ namespace Utility
                 //10分钟一次取整
                 m2 = m2 / 10 * 10;
 
-                return new DateTime(y,m,d,h,m2,0).ToString("yyyyMMddHHmm00");
+                return new DateTime(y, m, d, h, m2, 0).ToString("yyyyMMddHHmm00");
             }
         }
     }

@@ -26,6 +26,8 @@ namespace MyFriend.Friend
 
         static void Main(string[] args)
         {
+            Shop.StarCharge sc = new Shop.StarCharge();
+            var s = sc.GetStationsFromWx();
             if (!IsValidArgument(args, out cmd, out app, out type,out filter)) return;
 
             InitAll();

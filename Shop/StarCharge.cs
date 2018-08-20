@@ -25,7 +25,8 @@ namespace MyFriend.Shop
 
         private string GetStationDetailInternal(string staid)
         {
-            //Utils.WriteLog("Processing "+staid);
+
+
             //string url = "https://wx.starcharge.com/api/xcx.getStubGroup?FRAMEparams=%7B%22stubGroupId%22:%22" + staid + "%22,%22lat%22:36,%22lng%22:117%7D";
             //string data = "{}";
             //var ret = Utils.PostData(url, data);
@@ -34,25 +35,31 @@ namespace MyFriend.Shop
             string url = "https://app.starcharge.com/webApi/stubGroup/stubGroupDetailNew";
             //staid = "13c5bd63-af61-48ea-be99-566728d7d06d";
             string data = "FRAMEparams=%7B%22id%22%3A%22" + staid + "%22%2C%22gisType%22%3A%221%22%2C%22lat%22%3A%220%22%2C%22lng%22%3A%220%22%2C%22userId%22%3A%22586df5d4-1a05-4f4f-b94a-1dbe95d6c9e9%22%2C%22tabType%22%3A0%7D";
+            string ret = String.Empty;
 
-            try
+            for (int retry = 0; retry < 10; retry++)
             {
-                var ret = Utils.PostData(url, data
-                    //headers:new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
-                    //cookies:new List<Cookie>(){
-                    //    new Cookie("SERVERID","b47c9cbf6504664a1b28cd9324d36d5e|1533258390|1533258360","/","app.starcharge.com"),
-                    //    new Cookie("JSESSIONID","8D5F2E3B34951EACD2EBA6013FD1F2C8","/","app.starcharge.com")
-                    //},
-                    //userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
-                    );
-                return ret;
+                try
+                {
+                    ret = Utils.PostData(url, data
+                        //headers:new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
+                        //cookies:new List<Cookie>(){
+                        //    new Cookie("SERVERID","b47c9cbf6504664a1b28cd9324d36d5e|1533258390|1533258360","/","app.starcharge.com"),
+                        //    new Cookie("JSESSIONID","8D5F2E3B34951EACD2EBA6013FD1F2C8","/","app.starcharge.com")
+                        //},
+                        //userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
+                        );
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Utils.WriteLog("获取订单信息失败，电站id：" + staid);
+                    Utils.WriteLog(ex.Message);
+                    ret = "";
+                }
             }
-            catch (Exception ex)
-            {
-                Utils.WriteLog(staid);
-                Utils.WriteLog(ex.Message);
-                return "";
-            }
+
+            return ret;
         }
 
         private string GetStationsByCity(string city)
@@ -227,7 +234,7 @@ namespace MyFriend.Shop
                         province,//省
                         city,//市
                         district,//区
-                        Convert.ToString(s["address"]),//电站地址
+                        Convert.ToString(s["address"]).Replace(Environment.NewLine, ""),//电站地址
                         GetStubGroupType(Convert.ToString(s["stubGroupType"])),//电站类型
                         GetOperationType(Convert.ToString(s["type"])),//运营类型
                         Convert.ToString(s["serviceTime"]),//运营时间
@@ -235,10 +242,10 @@ namespace MyFriend.Shop
                         Convert.ToString(s["gisGcj02Lng"]),//经度
                         Convert.ToString(s["gisGcj02Lat"]),//纬度
                         0,//Convert.ToString(fastkw + slowkw),//总功率
-                        (kw>7)?kw:0,//快充总功率
-                        (kw<=7)?kw:0,//慢充总功率
-                        (kw>7)?1:0,
-                        (kw<=7)?1:0,
+                        (kw > 7) ? kw : 0,//快充总功率
+                        (kw <= 7) ? kw : 0,//慢充总功率
+                        (kw > 7) ? 1 : 0,
+                        (kw <= 7) ? 1 : 0,
                         "",//电费
                         "",//服务费
                         Convert.ToString(s["totalFeeInfo"]),//#总费用
@@ -375,6 +382,7 @@ namespace MyFriend.Shop
                 var district = Utils.CityMappings[key].Item3;
 
                 var array = s["stubList"] as JArray;
+
 
                 foreach (var pile in array)
                 {
