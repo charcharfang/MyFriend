@@ -16,7 +16,7 @@ namespace MyFriend.Shop
         public string GetStationDetail(string staid)
         {
 
-            var ret = GetStationDetailInternal(staid,"");
+            var ret = GetStationDetailInternal(staid, "");
             if (ret == "") return "";
 
             ret = JToken.Parse(ret).ToString(Newtonsoft.Json.Formatting.Indented);
@@ -30,9 +30,7 @@ namespace MyFriend.Shop
         // 地锁状态：stubInfo.lockStatus 0地锁降下，1：地锁升起，2：地锁故障
 
 
-        private static string acwsc = String.Empty;
-
-        private string GetStationDetailInternal(string staid,string acwtc)
+        private string GetStationDetailInternal(string staid, string acwtc)
         {
 
 
@@ -47,28 +45,34 @@ namespace MyFriend.Shop
             //data = "FRAMEparams=%7B%22id%22%3A%2239ab8ac2-6e23-4503-bfa1-84793a2b5ecf%22%2C%22gisType%22%3A%221%22%2C%22lat%22%3A%220%22%2C%22lng%22%3A%220%22%2C%22userId%22%3A%22586df5d4-1a05-4f4f-b94a-1dbe95d6c9e9%22%2C%22tabType%22%3A0%7D";
             //data = "FRAMEparams=%7B%22id%22%3A%22be795a70-ecd7-4025-b43a-212b22704116%22%2C%22gisType%22%3A%221%22%2C%22lat%22%3A%220%22%2C%22lng%22%3A%220%22%2C%22userId%22%3A%22586df5d4-1a05-4f4f-b94a-1dbe95d6c9e9%22%2C%22tabType%22%3A0%7D";
             string ret = String.Empty;
+
             for (int retry = 0; retry < 10; retry++)
+
+
+
+
+
+
+
+
+
+
+
+
             {
                 try
                 {
+
                     ret = Utils.PostData(url, data,
-                        //headers:new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
+                        headers: new Dictionary<string, string>() { { "X-Requested-With", "XMLHttpRequest" } },
                         cookies: new List<Cookie>(){
                             new Cookie("SERVERID","e637080bf5012df6ff8933df294ae711|1535427739|1535427716","/","app.starcharge.com"),
                             new Cookie("JSESSIONID","12D9D557843A6147106D55B7D53505BB","/","app.starcharge.com"),
                             new Cookie("acw_tc",acwtc,"/","app.starcharge.com"),
-                            new Cookie("acw_sc__",acwsc.ToLower(),"/","app.starcharge.com")//acwsc周期为10分钟
-                                                   
-                        }
-                        //userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
+                            new Cookie("acw_sc__","5b84e2ab16cc648a6cf2d33aeb5d56bfca9bcedd","/","app.starcharge.com")
+                        },
+                        userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15G77"
                         );
-
-                    if (ret.StartsWith("<html>"))
-                    {
-                        string arg1 = Utils.GetPartFromString(ret, "arg1='", "'");
-                        acwsc = GetACWSC(arg1);
-                        continue;
-                    }
                     break;
                 }
                 catch (Exception ex)
@@ -80,6 +84,7 @@ namespace MyFriend.Shop
             }
 
             return ret;
+
         }
 
         private string GetStationsByCity(string city)
@@ -161,7 +166,7 @@ namespace MyFriend.Shop
             StringBuilder sb = new StringBuilder();
             string cookie = Utils.GetCookie("https://app.starcharge.com/stubGroup/stubGroupDetailNew.do?appLat=0&accountId=1890f5d4-1c05-4f4f-b64a-1dba3dd789e9&distance=0&id=be795a70-ecd7-4025-b43a-212b22704116&appLng=0&stubType=0&tabType=0&gisType=1");
             var clist = cookie.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            var acwtc = clist[0].Split(new char[] { '=' })[1];///TODO:这个值写死，可以用到9月28日。
+            var acwtc = clist[0].Split(new char[] { '=' })[1];
             //var expires = DateTime.Parse(clist[2].Split(new char[] { '=' })[1]);
 
             var stations = GetStationsID();
@@ -421,10 +426,6 @@ namespace MyFriend.Shop
                         "星星充电",//APP名称
                         Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
                         Convert.ToString(s["id"]),//电站编号
-                        Convert.ToString(s["name"]),//电站名称
-                        province,
-                        city,
-                        district,
                         Convert.ToString(pile["id"]),//桩编号
                         Convert.ToString(stub["currentO"]),//实际电流
                         Convert.ToString(stub["voltageO"]),//实际电压
@@ -443,38 +444,6 @@ namespace MyFriend.Shop
             }
 
             return sb.ToString();
-        }
-
-        private string GetACWSC(string arg1)
-        {
-            string acwsc = String.Empty;
-
-            var magics = new byte[]{ 0xf, 0x23, 0x1d, 0x18, 0x21, 0x10, 0x1, 0x26, 0xa, 0x9, 0x13, 0x1f, 0x28, 0x1b, 0x16, 0x17, 0x19, 0xd, 0x6, 0xb, 0x27, 0x12, 0x14, 0x8, 0xe, 0x15, 0x20, 0x1a, 0x2, 0x1e, 0x7, 0x4, 0x11, 0x5, 0x3, 0x1c, 0x22, 0x25, 0xc, 0x24 };
-            byte[] list = new byte[magics.Length];
-
-            for (var i = 0; i < arg1.Length; i++)
-            {
-                var tempitem = (byte)(Convert.ToInt32(arg1[i].ToString(), 16));
-                for (var j = 0; j < magics.Length; j++)
-                {
-                    if (magics[j] == i + 1)
-                    {
-                        list[j] = tempitem;
-                    }
-                }
-            }
-
-            var magic = "3000176000856006061501533003690027800375";
-
-            for (var i = 0; i < list.Length && i < magic.Length; i += 2)
-            {
-                var tempVal = list[i]*16+ list[i+1];
-                var _z = Convert.ToInt32(magic.Substring(i, 2), 16);
-                var afterXor = (tempVal ^ _z).ToString("X2");
-                acwsc += afterXor;
-            }
-
-            return acwsc;
         }
     }
 }

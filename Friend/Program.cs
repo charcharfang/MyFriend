@@ -26,8 +26,9 @@ namespace MyFriend.Friend
 
         static void Main(string[] args)
         {
-            Shop.StarCharge sc = new Shop.StarCharge();
-            var s = sc.GetStationsFromWx();
+            DateTime today = new DateTime(2018, 8, 20);
+            DateTime nextday = new DateTime(2018, 8, 21);
+            var td = (nextday - today).TotalDays;
             if (!IsValidArgument(args, out cmd, out app, out type,out filter)) return;
 
             InitAll();

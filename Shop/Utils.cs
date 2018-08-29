@@ -250,6 +250,19 @@ namespace Utility
                 return new DateTime(y, m, d, h, m2, 0).ToString("yyyyMMddHHmm00");
             }
         }
+
+        public static string GetCookie(string url)
+        {
+            string ret = String.Empty;
+
+            using (WebClient wc = new WebClient())
+            {
+                var nouse = wc.DownloadString(url);
+                ret = wc.ResponseHeaders["Set-Cookie"];
+            }
+
+            return ret;
+        }
     }
 
 
