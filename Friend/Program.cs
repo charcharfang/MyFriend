@@ -26,10 +26,9 @@ namespace MyFriend.Friend
 
         static void Main(string[] args)
         {
-            DateTime today = new DateTime(2018, 8, 20);
-            DateTime nextday = new DateTime(2018, 8, 21);
-            var td = (nextday - today).TotalDays;
-            if (!IsValidArgument(args, out cmd, out app, out type,out filter)) return;
+            //Do828();
+            //return;
+            if (!IsValidArgument(args, out cmd, out app, out type, out filter)) return;
 
             InitAll();
             switch (cmd)
@@ -38,7 +37,7 @@ namespace MyFriend.Friend
                     EnterListMode();
                     break;
                 case "dump":
-                    DoDump(app, type,filter);
+                    DoDump(app, type, filter);
                     break;
                 default:
                     EnterListMode();
@@ -46,6 +45,42 @@ namespace MyFriend.Friend
             }
 
             return;
+        }
+
+        private static void Do828()
+        {
+            string url = "https://wx.starcharge.com/api/weChat.cityList?FRAMEparams=%7B%7D";
+            string data = "{}";
+
+            var ret = Utils.PostData(url, data);
+            var citylist = (JsonConvert.DeserializeObject(ret) as JToken)["data"] as JArray;
+
+
+            url = "https://828-console.starcharge.com/webApi/activityInfo/get";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("城市,userLightChance,cityLight,userLight,lotteryChance,userRechargeChance");
+            foreach (var c in citylist)
+            {
+                var id = Convert.ToString(c["id"]);
+                var city = Convert.ToString(c["name"]);
+
+                data = "accountId=43957296-3b80-980f-12f4-943873dc09a3&city=" + id;
+                var json = Utils.PostData(url, data);
+
+                var d = JsonConvert.DeserializeObject(json) as JToken;
+
+                int userLightChance = Convert.ToInt32(d["data"]["userLightChance"]);
+                int cityLight = Convert.ToInt32(d["data"]["cityLight"]);
+                int userLight = Convert.ToInt32(d["data"]["userLight"]);
+                int lotteryChance = Convert.ToInt32(d["data"]["lotteryChance"]);
+                int userRechargeChance = Convert.ToInt32(d["data"]["userRechargeChance"]);
+
+                if (userLightChance + cityLight + userLight + lotteryChance + userRechargeChance < 1) continue;
+
+                sb.AppendFormat("{0},{1},{2},{3},{4},{5}\r\n", city,userLightChance, cityLight, userLight, lotteryChance, userRechargeChance);
+            }
+
+            File.WriteAllText(Utils.PATH + "828.csv",sb.ToString(),Encoding.UTF8);
         }
 
         private static void DoDump(string app, string type, string filter)
@@ -126,14 +161,14 @@ namespace MyFriend.Friend
                 }
             }
         }
-        private static bool IsValidArgument(string[] args, out string cmd, out string app, out string type,out string filter)
+        private static bool IsValidArgument(string[] args, out string cmd, out string app, out string type, out string filter)
         {
             cmd = "list";
             app = "all";
             type = "station";
             filter = "";
 
-            if (args.Length != 0 && args.Length != 2 && args.Length != 4 && args.Length != 6 && args.Length!=8)
+            if (args.Length != 0 && args.Length != 2 && args.Length != 4 && args.Length != 6 && args.Length != 8)
             {
                 goto INVALID;
             }
@@ -223,11 +258,11 @@ namespace MyFriend.Friend
                 ts = Utils.TimeStampTime;
                 dump = Convert.ToString(t.InvokeMember("Transform2Order",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { ts,filter }
+                                null, obj, new object[] { ts, filter }
                             ));
             }
 
-            File.WriteAllText(String.Format("data\\{0}_{1}.{2}s", item.Class, ts,type), dump);
+            File.WriteAllText(String.Format("{3}{0}_{1}.{2}s", item.Class, ts, type, Utils.PATH), dump);
 
         }
 

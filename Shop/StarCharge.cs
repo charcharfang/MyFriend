@@ -30,7 +30,7 @@ namespace MyFriend.Shop
         // 地锁状态：stubInfo.lockStatus 0地锁降下，1：地锁升起，2：地锁故障
 
 
-        private static string acwsc = String.Empty;
+        private static string acwsc = String.Empty;//全局，10分钟失效一次。
 
         private string GetStationDetailInternal(string staid,string acwtc)
         {
@@ -64,9 +64,12 @@ namespace MyFriend.Shop
                         );
 
                     if (ret.StartsWith("<html>"))
-                    {
+                    {                        
                         string arg1 = Utils.GetPartFromString(ret, "arg1='", "'");
+                        string tmp = acwsc;
                         acwsc = GetACWSC(arg1);
+                        Utils.WriteLog(String.Format("ACWSC变更成功，从{0}->{1}", tmp, acwsc));
+
                         continue;
                     }
                     break;
@@ -161,7 +164,7 @@ namespace MyFriend.Shop
             StringBuilder sb = new StringBuilder();
             string cookie = Utils.GetCookie("https://app.starcharge.com/stubGroup/stubGroupDetailNew.do?appLat=0&accountId=1890f5d4-1c05-4f4f-b64a-1dba3dd789e9&distance=0&id=be795a70-ecd7-4025-b43a-212b22704116&appLng=0&stubType=0&tabType=0&gisType=1");
             var clist = cookie.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            var acwtc = clist[0].Split(new char[] { '=' })[1];///TODO:这个值写死，可以用到9月28日。
+            var acwtc = clist[0].Split(new char[] { '=' })[1];//有效期1年
             //var expires = DateTime.Parse(clist[2].Split(new char[] { '=' })[1]);
 
             var stations = GetStationsID();
