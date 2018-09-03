@@ -263,6 +263,38 @@ namespace Utility
 
             return ret;
         }
+
+        public static string GetACWSC(string arg1)
+        {
+            string acwsc = String.Empty;
+
+            var magics = new byte[] { 0xf, 0x23, 0x1d, 0x18, 0x21, 0x10, 0x1, 0x26, 0xa, 0x9, 0x13, 0x1f, 0x28, 0x1b, 0x16, 0x17, 0x19, 0xd, 0x6, 0xb, 0x27, 0x12, 0x14, 0x8, 0xe, 0x15, 0x20, 0x1a, 0x2, 0x1e, 0x7, 0x4, 0x11, 0x5, 0x3, 0x1c, 0x22, 0x25, 0xc, 0x24 };
+            byte[] list = new byte[magics.Length];
+
+            for (var i = 0; i < arg1.Length; i++)
+            {
+                var tempitem = (byte)(Convert.ToInt32(arg1[i].ToString(), 16));
+                for (var j = 0; j < magics.Length; j++)
+                {
+                    if (magics[j] == i + 1)
+                    {
+                        list[j] = tempitem;
+                    }
+                }
+            }
+
+            var magic = "3000176000856006061501533003690027800375";
+
+            for (var i = 0; i < list.Length && i < magic.Length; i += 2)
+            {
+                var tempVal = list[i] * 16 + list[i + 1];
+                var _z = Convert.ToInt32(magic.Substring(i, 2), 16);
+                var afterXor = (tempVal ^ _z).ToString("X2");
+                acwsc += afterXor;
+            }
+
+            return acwsc;
+        }
     }
 
 
