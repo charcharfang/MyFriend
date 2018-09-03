@@ -218,86 +218,78 @@ namespace MyFriend.Shop
             {
                 var s = (JsonConvert.DeserializeObject(all[i]) as JToken)["data"];
                 if (Convert.ToString(s) == "") continue;
-                var key = Convert.ToString(s["city"]);
 
-                key = ConvertFuckedCitycode(key);
+                string key = String.Empty, province = String.Empty, city = string.Empty, district = string.Empty;
 
-                var province = Utils.CityMappings[key].Item1;
-                var city = Utils.CityMappings[key].Item2;
-                var district = Utils.CityMappings[key].Item3;
-
-                var array = s["stubList"] as JArray;
-                //int fastkw = 0, slowkw = 0;
-                //int nfast = 0, nslow = 0;
-
-                //foreach (var pile in array)
-                //{
-                //    string name = Convert.ToString(pile["name"]);
-                //    int kw = Convert.ToInt32(pile["kw"]);
-
-                //    if (name.Length == 13) kw = kw / 2;
-
-                //    if (kw > 7)
-                //    {
-                //        fastkw += kw;
-                //        nfast++;
-                //    }
-                //    else
-                //    {
-                //        slowkw += kw;
-                //        nslow++;
-                //    }
-                //}
-
-                foreach (var pile in array)
+                try
                 {
-                    string name = Convert.ToString(pile["name"]);
-                    int kw = Convert.ToInt32(pile["kw"]);
+                    key = Convert.ToString(s["city"]);
 
-                    if (name.Length == 13) kw = kw / 2;
+                    key = ConvertFuckedCitycode(key);
 
-                    sb.AppendFormat(tuple.Item2,
-                        "星星充电",//APP名称
-                        Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
-                        Convert.ToString(s["id"]),//电站编号
-                        Convert.ToString(s["name"]),//电站名称
-                        province,//省
-                        city,//市
-                        district,//区
-                        Convert.ToString(s["address"]).Replace(Environment.NewLine, ""),//电站地址
-                        GetStubGroupType(Convert.ToString(s["stubGroupType"])),//电站类型
-                        GetOperationType(Convert.ToString(s["type"])),//运营类型
-                        Convert.ToString(s["serviceTime"]),//运营时间
-                        "",//电话
-                        Convert.ToString(s["gisGcj02Lng"]),//经度
-                        Convert.ToString(s["gisGcj02Lat"]),//纬度
-                        0,//Convert.ToString(fastkw + slowkw),//总功率
-                        (kw > 7) ? kw : 0,//快充总功率
-                        (kw <= 7) ? kw : 0,//慢充总功率
-                        (kw > 7) ? 1 : 0,
-                        (kw <= 7) ? 1 : 0,
-                        "",//电费
-                        "",//服务费
-                        Convert.ToString(s["totalFeeInfo"]),//#总费用
-                        Convert.ToString(s["parkingFeeInfo"]),//停车
-                        Convert.ToString(s["parkingInfo"]),//指引
-                        Convert.ToString(s["gisGcj02Lng"]),//BD经度
-                        Convert.ToString(s["gisGcj02Lat"]),//BD纬度
-                        Convert.ToString(s["scoreAverage"]),//电站评分
-                        "",//标签
-                        Convert.ToString(s["paymentType"]),//支付方式,
+                    province = Utils.CityMappings[key].Item1;
+                    city = Utils.CityMappings[key].Item2;
+                    district = Utils.CityMappings[key].Item3;
 
-                        Convert.ToString(pile["id"]),//桩编号
-                        Convert.ToString(pile["name"]),//桩名称
-                        Convert.ToString(pile["type"]),//桩类型
-                        Convert.ToString(pile["status"]),//桩状态
-                        Convert.ToString(pile["modelNo"]),//桩型号
-                        Convert.ToString(pile["ratedCurrent"]),//额定电流
-                        Convert.ToString(pile["kw"]),//功率
-                        Convert.ToString(pile["voltageUpperLimit"]),//电压上限
-                        Convert.ToString(pile["voltageLowerLimit"]),//电压下限
-                        Convert.ToString(pile["voltageAuxiliary"])//辅源
-                    );
+                    var array = s["stubList"] as JArray;
+
+                    foreach (var pile in array)
+                    {
+                        string name = Convert.ToString(pile["name"]);
+                        int kw = Convert.ToInt32(pile["kw"]);
+
+                        if (name.Length == 13) kw = kw / 2;
+
+                        sb.AppendFormat(tuple.Item2,
+                            "星星充电",//APP名称
+                            Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
+                            Convert.ToString(s["id"]),//电站编号
+                            Convert.ToString(s["name"]),//电站名称
+                            Convert.ToString(s["CreateTime"]),//电站名称
+                            province,//省
+                            city,//市
+                            district,//区
+                            Convert.ToString(s["address"]).Replace(Environment.NewLine, ""),//电站地址
+                            GetStubGroupType(Convert.ToString(s["stubGroupType"])),//电站类型
+                            GetOperationType(Convert.ToString(s["type"])),//运营类型
+                            Convert.ToString(s["serviceTime"]),//运营时间
+                            "",//电话
+                            Convert.ToString(s["gisGcj02Lng"]),//经度
+                            Convert.ToString(s["gisGcj02Lat"]),//纬度
+                            0,//Convert.ToString(fastkw + slowkw),//总功率
+                            (kw > 7) ? kw : 0,//快充总功率
+                            (kw <= 7) ? kw : 0,//慢充总功率
+                            (kw > 7) ? 1 : 0,
+                            (kw <= 7) ? 1 : 0,
+                            "",//电费
+                            "",//服务费
+                            Convert.ToString(s["totalFeeInfo"]),//#总费用
+                            Convert.ToString(s["parkingFeeInfo"]),//停车
+                            Convert.ToString(s["parkingInfo"]),//指引
+                            Convert.ToString(s["gisGcj02Lng"]),//BD经度
+                            Convert.ToString(s["gisGcj02Lat"]),//BD纬度
+                            Convert.ToString(s["scoreAverage"]),//电站评分
+                            "",//标签
+                            Convert.ToString(s["paymentType"]),//支付方式,
+
+                            Convert.ToString(pile["id"]),//桩编号
+                            Convert.ToString(pile["name"]),//桩名称
+                            Convert.ToString(pile["type"]),//桩类型
+                            Convert.ToString(pile["status"]),//桩状态
+                            Convert.ToString(pile["modelNo"]),//桩型号
+                            Convert.ToString(pile["ratedCurrent"]),//额定电流
+                            Convert.ToString(pile["kw"]),//功率
+                            Convert.ToString(pile["voltageUpperLimit"]),//电压上限
+                            Convert.ToString(pile["voltageLowerLimit"]),//电压下限
+                            Convert.ToString(pile["voltageAuxiliary"])//辅源
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Utility.Utils.WriteLog(ex.Message);
+                    Utility.Utils.WriteLog(ex.StackTrace);
+                    Utility.Utils.WriteLog(String.Format("Key is :{0},p={1},c={2},d={3}",key,province,city,district));
                 }
             }
 
@@ -407,9 +399,9 @@ namespace MyFriend.Shop
 
                 key = ConvertFuckedCitycode(key);
 
-                var province = Utils.CityMappings[key].Item1;
-                var city = Utils.CityMappings[key].Item2;
-                var district = Utils.CityMappings[key].Item3;
+                //var province = Utils.CityMappings[key].Item1;
+                //var city = Utils.CityMappings[key].Item2;
+                //var district = Utils.CityMappings[key].Item3;
 
                 var array = s["stubList"] as JArray;
 
@@ -424,10 +416,10 @@ namespace MyFriend.Shop
                         "星星充电",//APP名称
                         Convert.ToString(s["operatorId"]) == "" ? "星星充电" : Convert.ToString(s["operatorId"]),//运营商
                         Convert.ToString(s["id"]),//电站编号
-                        Convert.ToString(s["name"]),//电站名称
-                        province,
-                        city,
-                        district,
+                        //Convert.ToString(s["name"]),//电站名称
+                        //province,
+                        //city,
+                        //district,
                         Convert.ToString(pile["id"]),//桩编号
                         Convert.ToString(stub["currentO"]),//实际电流
                         Convert.ToString(stub["voltageO"]),//实际电压

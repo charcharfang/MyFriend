@@ -77,10 +77,10 @@ namespace MyFriend.Friend
 
                 if (userLightChance + cityLight + userLight + lotteryChance + userRechargeChance < 1) continue;
 
-                sb.AppendFormat("{0},{1},{2},{3},{4},{5}\r\n", city,userLightChance, cityLight, userLight, lotteryChance, userRechargeChance);
+                sb.AppendFormat("{0},{1},{2},{3},{4},{5}\r\n", city, userLightChance, cityLight, userLight, lotteryChance, userRechargeChance);
             }
 
-            File.WriteAllText(Utils.PATH + "828.csv",sb.ToString(),Encoding.UTF8);
+            File.WriteAllText(Utils.PATH + "828.csv", sb.ToString(), Encoding.UTF8);
         }
 
         private static void DoDump(string app, string type, string filter)
@@ -250,7 +250,7 @@ namespace MyFriend.Friend
                 ts = Utils.TimeStampDate;
                 dump = Convert.ToString(t.InvokeMember("Transform2Station",
                                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { GetBigtext(item), ts }
+                                null, obj, new object[] { GetCachedStationsPerDay(item), ts }
                             ));
             }
             else if (type == "order")
@@ -612,32 +612,30 @@ namespace MyFriend.Friend
 
         }
 
-        static string GetBigtext(ShopItem item)
+        static string GetCachedStationsPerDay(ShopItem item)
         {
             var t = item.Type;
-            string fname = String.Format("{0}\\Cache-{1}.txt", Utils.PATH, t.FullName);
+            var dt = DateTime.Now.ToString("yyyyMMdd");
             string bigtext = String.Empty;
+
+            string fname = String.Format("{0}Cache-{1}.txt", Utils.PATH, t.FullName);
+
+            if (File.Exists(fname)) File.Delete(fname);
 
             var obj = Activator.CreateInstance(t);
 
-            if (false == File.Exists(fname))
-            {
-                bigtext = t.InvokeMember("GetStations",
-                                BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                                null, obj, new object[] { }
-                            ).ToString();
-                File.WriteAllText(fname, bigtext);
-            }
-            else
-            {
-                bigtext = File.ReadAllText(fname);
-            }
+            bigtext = t.InvokeMember("GetStations",
+                            BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
+                            null, obj, new object[] { }
+                        ).ToString();
+            File.WriteAllText(fname, bigtext);
+
 
             return bigtext;
         }
         static List<List<string>> GetCachedStations(ShopItem item)
         {
-            var bigtext = GetBigtext(item);
+            var bigtext = GetCachedStationsPerDay(item);
             var t = item.Type;
             var obj = Activator.CreateInstance(t);
 
